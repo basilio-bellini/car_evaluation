@@ -55,5 +55,8 @@ print(df.head())
 df = df[df["description"].str.strip() != ""]
 print(f"После удаления пустых описаний: {len(df)}")
 
+df = df.drop_duplicates(subset='url')
+print(f"После удаления дублей: {len(df)}")
+
 df.to_csv("../data/processed/cars.csv", index=False, encoding="utf-8-sig")
 print("Сохранено в data/processed/cars.csv")
