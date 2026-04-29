@@ -3,7 +3,7 @@ import json
 import time
 import random
 
-# Загружаем уже собранные данные
+
 with open("../data/raw/offers.json", "r", encoding="utf-8") as f:
     offers = json.load(f)
 

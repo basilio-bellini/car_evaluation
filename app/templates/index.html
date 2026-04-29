@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarSense — Оценка автомобиля</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-sidebar: #0d1117;
+            --accent: #2f80ed;
+            --accent-hover: #1366d6;
+            --accent-light: rgba(47, 128, 237, 0.12);
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: rgba(255,255,255,0.08);
+            --success: #3fb950;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            padding: 24px 0;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .nav-section {
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 8px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item:hover {
+            background: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .nav-item i { font-size: 16px; width: 18px; }
+
+        .sidebar-footer {
+            padding: 16px 12px 0;
+            border-top: 1px solid var(--border);
+            margin: 0 0;
+        }
+
+        /* ── Main content ── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .card-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        /* ── Form elements ── */
+        .form-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-control, .form-select {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            padding: 10px 14px;
+            transition: border-color 0.15s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--bg-dark);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.15);
+        }
+
+        .form-select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder { color: var(--text-secondary); }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 24px;
+            transition: all 0.15s;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(47, 128, 237, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--border);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── How it works block ── */
+        .how-it-works {
+            background: linear-gradient(135deg, rgba(47,128,237,0.1) 0%, rgba(47,128,237,0.05) 100%);
+            border: 1px solid rgba(47,128,237,0.2);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .how-it-works h6 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .how-step {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+            align-items: flex-start;
+        }
+
+        .how-step:last-child { margin-bottom: 0; }
+
+        .step-icon {
+            width: 28px; height: 28px;
+            background: var(--accent-light);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent);
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            padding-top: 4px;
+        }
+
+        .how-footer {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            line-height: 1.5;
+        }
+
+        /* ── Result card ── */
+        .result-card {
+            display: none;
+        }
+
+        .result-price {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 42px;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .result-price span {
+            font-size: 28px;
+            color: var(--text-secondary);
+        }
+
+        .result-range {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .badge-accuracy {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(63, 185, 80, 0.12);
+            color: var(--success);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .params-table { width: 100%; }
+        .params-table tr td {
+            padding: 8px 0;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+        }
+        .params-table tr:last-child td { border-bottom: none; }
+        .params-table td:first-child { color: var(--text-secondary); }
+        .params-table td:last-child { color: var(--text-primary); font-weight: 500; text-align: right; }
+
+        /* ── Modal ── */
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--text-primary);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 24px;
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .modal-body { padding: 24px; }
+
+        .btn-close {
+            filter: invert(1);
+            opacity: 0.5;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            border: none;
+            background: none;
+        }
+
+        .auth-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+
+        /* ── Loading spinner ── */
+        .spinner-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(13,17,23,0.7);
+            border-radius: var(--radius);
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* ── Alert ── */
+        .alert-custom {
+            background: rgba(47,128,237,0.1);
+            border: 1px solid rgba(47,128,237,0.2);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🚗</div>
+        <div>
+            <div class="logo-text">CarSense</div>
+            <div class="logo-sub">ML оценка авто</div>
+        </div>
+    </div>
+
+    <nav class="nav-section" id="nav-section"></nav>
+
+    <div class="sidebar-footer">
+        <div id="auth-btn-container">
+            <button class="nav-item" onclick="openAuthModal()">
+                <i class="bi bi-box-arrow-in-right"></i> Войти
+            </button>
+        </div>
+    </div>
+</aside>
+
+
+<main class="main-content">
+
+
+    <div id="form-section">
+        <div class="page-header mb-4">
+            <h1>Оценка автомобиля</h1>
+            <p>Заполните параметры автомобиля для получения оценки стоимости</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-title">Параметры автомобиля</div>
+                    <form id="predict-form">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Марка</label>
+                                <label for="brand"></label><select class="form-select" id="brand"  required>
+                                    <option value="" hidden></option>
+                                    <option>Toyota</option><option>BMW</option>
+                                    <option>Mercedes-Benz</option><option>Audi</option>
+                                    <option>Volkswagen</option><option>Kia</option>
+                                    <option>Hyundai</option><option>Nissan</option>
+                                    <option>Mazda</option><option>Skoda</option>
+                                    <option>Lada (ВАЗ)</option><option>Renault</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Модель</label>
+                                <label for="model"></label><input type="text" class="form-control" id="model" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Год выпуска</label>
+                                <label for="year"></label><input type="number" class="form-control" id="year" min="1990" max="2026" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Пробег, км</label>
+                                <label for="mileage"></label><input type="number" class="form-control" id="mileage" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Тип кузова</label>
+                                <label for="body_type"></label><select class="form-select" id="body_type" required>
+                                    <option value="" hidden></option>
+                                    <option value="SEDAN">Седан</option>
+                                    <option value="ALLROAD_5_DOORS">Кроссовер</option>
+                                    <option value="HATCHBACK_5_DOORS">Хэтчбек</option>
+                                    <option value="WAGON_5_DOORS">Универсал</option>
+                                    <option value="COUPE">Купе</option>
+                                    <option value="MINIVAN">Минивэн</option>
+                                    <option value="LIFTBACK">Лифтбек</option>
+                                    <option value="OTHER">Другое</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Тип топлива</label>
+                                <label for="engine_type"></label><select class="form-select" id="engine_type" required>
+                                    <option value="" hidden></option>
+                                    <option value="GASOLINE">Бензин</option>
+                                    <option value="DIESEL">Дизель</option>
+                                    <option value="HYBRID">Гибрид</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Объём двигателя, л</label>
+                                <label for="displacement"></label><input type="number" class="form-control" id="displacement" step="0.1" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Мощность, л.с.</label>
+                                <label for="power"></label><input type="number" class="form-control" id="power" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Коробка передач</label>
+                                <label for="transmission"></label><select class="form-select" id="transmission" required>
+                                    <option value="" hidden></option>
+                                    <option value="AUTOMATIC">Автомат</option>
+                                    <option value="MECHANICAL">Механика</option>
+                                    <option value="ROBOT">Робот</option>
+                                    <option value="VARIATOR">Вариатор</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Привод</label>
+                                <label for="gear_type"></label><select class="form-select" id="gear_type" required>
+                                    <option value="" hidden></option>
+                                    <option value="FORWARD_CONTROL">Передний</option>
+                                    <option value="REAR_DRIVE">Задний</option>
+                                    <option value="ALL_WHEEL_DRIVE">Полный</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Цвет</label>
+                                <label for="color"></label><select class="form-select" id="color" required>
+                                    <option value="" hidden></option>
+                                    <option value="белый">Белый</option>
+                                    <option value="чёрный">Чёрный</option>
+                                    <option value="серый">Серый</option>
+                                    <option value="серебристый">Серебристый</option>
+                                    <option value="синий">Синий</option>
+                                    <option value="красный">Красный</option>
+                                    <option value="коричневый">Коричневый</option>
+                                    <option value="зелёный">Зелёный</option>
+                                    <option value="бежевый">Бежевый</option>
+                                    <option value="другой">Другой</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Класс авто</label>
+                                <label for="auto_class"></label><select class="form-select" id="auto_class" required>
+                                    <option value="" hidden></option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                    <option value="J">J (SUV)</option>
+                                    <option value="M">M (Минивэн)</option>
+                                    <option value="UNKNOWN">Не знаю</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Количество владельцев</label>
+                                <label for="owners_number"></label><input type="number" class="form-control" id="owners_number" min="0" max="10" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Состояние по документам</label>
+                                <label for="accidents"></label><select class="form-select" id="accidents" required>
+                                    <option value="" hidden></option>
+                                    <option value="OK">Нет ДТП</option>
+                                    <option value="ERROR">Есть ДТП</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search me-2"></i>Оценить автомобиль
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Как это работает -->
+            <div class="col-lg-4">
+                <div class="how-it-works">
+                    <h6><i class="bi bi-stars me-2"></i>Как это работает?</h6>
+                    <div class="how-step">
+                        <div class="step-icon"><i class="bi bi-ui-checks"></i></div>
+                        <div class="step-text">Вы заполняете параметры автомобиля</div>
+                    </div>
+                    <div class="how-step">
+                        <div class="step-icon"><i class="bi bi-cpu"></i></div>
+                        <div class="step-text">Модель машинного обучения анализирует данные</div>
+                    </div>
+                    <div class="how-step">
+                        <div class="step-icon"><i class="bi bi-graph-up"></i></div>
+                        <div class="step-text">Вы получаете рыночную оценку стоимости автомобиля</div>
+                    </div>
+                    <div class="how-footer">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Модель обучена на тысячах объявлений и рыночных данных
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-section" class="result-card">
+        <div class="page-header mb-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Результат оценки</h1>
+                <p>Рыночная стоимость вашего автомобиля</p>
+            </div>
+            <button class="btn btn-outline-secondary" onclick="showForm()">
+                <i class="bi bi-arrow-left me-2"></i>Новая оценка
+            </button>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="text-muted mb-2" style="font-size:13px;">Рыночная оценка автомобиля</div>
+                    <div class="result-price" id="result-price">— ₽</div>
+                    <div class="result-range" id="result-range"></div>
+                    <div class="badge-accuracy">
+                        <i class="bi bi-patch-check-fill"></i> Высокая точность
+                    </div>
+
+                    <div class="divider mt-4"></div>
+
+                    <div class="alert-custom mt-3">
+                        <i class="bi bi-info-circle" style="color: var(--accent)"></i>
+                        Оценка носит информационный характер и не является офертой.
+                    </div>
+
+                    <div id="not-saved-notice" class="alert-custom mt-2" style="display:none;">
+                        <i class="bi bi-lock" style="color: var(--accent)"></i>
+                        <span>Войдите чтобы сохранить результат в историю.
+                            <a href="#" onclick="openAuthModal()" style="color: var(--accent)">Войти</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-title">Параметры автомобиля</div>
+                    <table class="params-table" id="params-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ══════════════════════════════════════
+     AUTH MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="authModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добро пожаловать в CarSense</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchTab('login')">Войти</button>
+                    <button class="auth-tab" onclick="switchTab('register')">Зарегистрироваться</button>
+                </div>
+
+                <div id="login-form">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <label for="login-email"></label><input type="email" class="form-control" id="login-email" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Пароль</label>
+                        <label for="login-password"></label><input type="password" class="form-control" id="login-password" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="login()">Войти</button>
+                    <div id="login-error" class="text-danger mt-2" style="font-size:13px;"></div>
+                </div>
+
+                <div id="register-form" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <label for="reg-email"></label><input type="email" class="form-control" id="reg-email" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <label for="reg-password"></label><input type="password" class="form-control" id="reg-password" placeholder="Минимум 6 символов">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Подтвердите пароль</label>
+                        <label for="reg-password2"></label><input type="password" class="form-control" id="reg-password2" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="register()">Зарегистрироваться</button>
+                    <div id="register-error" class="text-danger mt-2" style="font-size:13px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../static/js/nav.js"></script>
+<script>
+const API = 'http://localhost:8000';
+let authModal;
+
+document.addEventListener('DOMContentLoaded', () => {
+    authModal = new bootstrap.Modal(document.getElementById('authModal'));
+    renderNav('index');
+});
+
+
+function switchTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach((t, i) => {
+        t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+    });
+    document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+
+async function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const formData = new FormData();
+    formData.append('username', email);
+    formData.append('password', password);
+    try {
+        const res = await fetch(`${API}/auth/login`, { method: 'POST', body: formData });
+        const data = await res.json();
+        if (res.ok) {
+            localStorage.setItem('token', data.access_token);
+            authModal.hide();
+            await renderNav('index');
+        } else {
+            document.getElementById('login-error').textContent = data.detail || 'Ошибка входа';
+        }
+    } catch (e) {
+        document.getElementById('login-error').textContent = 'Ошибка соединения с сервером';
+    }
+}
+
+
+async function register() {
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    const password2 = document.getElementById('reg-password2').value;
+    if (password !== password2) {
+        document.getElementById('register-error').textContent = 'Пароли не совпадают';
+        return;
+    }
+    try {
+        const res = await fetch(`${API}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            switchTab('login');
+            document.getElementById('login-email').value = email;
+        } else {
+            document.getElementById('register-error').textContent = data.detail || 'Ошибка регистрации';
+        }
+    } catch (e) {
+        document.getElementById('register-error').textContent = 'Ошибка соединения с сервером';
+    }
+}
+
+
+document.getElementById('predict-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+        brand: document.getElementById('brand').value,
+        model: document.getElementById('model').value,
+        year: parseInt(document.getElementById('year').value),
+        mileage: parseInt(document.getElementById('mileage').value),
+        body_type: document.getElementById('body_type').value,
+        engine_type: document.getElementById('engine_type').value,
+        displacement: parseFloat(document.getElementById('displacement').value),
+        power: parseInt(document.getElementById('power').value),
+        transmission: document.getElementById('transmission').value,
+        gear_type: document.getElementById('gear_type').value,
+        color: document.getElementById('color').value,
+        auto_class: document.getElementById('auto_class').value,
+        owners_number: parseInt(document.getElementById('owners_number').value),
+        accidents: document.getElementById('accidents').value,
+    };
+    const token = localStorage.getItem('token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    try {
+        const res = await fetch(`${API}/predict/`, { method: 'POST', headers, body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (res.ok) {
+            showResult(data.predicted_price, payload);
+        } else {
+            alert('Ошибка: ' + (data.detail || 'Не удалось получить оценку'));
+        }
+    } catch (e) {
+        alert('Ошибка соединения с сервером');
+    }
+});
+
+
+function showResult(price, params) {
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('result-section').style.display = 'block';
+    const formatted = new Intl.NumberFormat('ru-RU').format(Math.round(price));
+    document.getElementById('result-price').innerHTML = `${formatted} <span>₽</span>`;
+    const low = new Intl.NumberFormat('ru-RU').format(Math.round(price * 0.92));
+    const high = new Intl.NumberFormat('ru-RU').format(Math.round(price * 1.08));
+    document.getElementById('result-range').textContent = `Диапазон: ${low} — ${high} ₽`;
+    const transLabels = { AUTOMATIC: 'Автомат', MECHANICAL: 'Механика', ROBOT: 'Робот', VARIATOR: 'Вариатор' };
+    const gearLabels = { FORWARD_CONTROL: 'Передний', REAR_DRIVE: 'Задний', ALL_WHEEL_DRIVE: 'Полный' };
+    const fuelLabels = { GASOLINE: 'Бензин', DIESEL: 'Дизель', HYBRID: 'Гибрид' };
+    const rows = [
+        ['Марка, модель', `${params.brand} ${params.model}`],
+        ['Год выпуска', params.year],
+        ['Пробег', `${new Intl.NumberFormat('ru-RU').format(params.mileage)} км`],
+        ['Двигатель', `${params.displacement} л / ${params.power} л.с.`],
+        ['Коробка передач', transLabels[params.transmission] || params.transmission],
+        ['Привод', gearLabels[params.gear_type] || params.gear_type],
+        ['Тип топлива', fuelLabels[params.engine_type] || params.engine_type],
+        ['Состояние', params.accidents === 'OK' ? 'Не битый' : 'Есть ДТП'],
+        ['Цвет', params.color],
+    ];
+    document.getElementById('params-table').innerHTML = rows
+        .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+    const token = localStorage.getItem('token');
+    document.getElementById('not-saved-notice').style.display = token ? 'none' : 'flex';
+}
+
+
+function showForm() {
+    document.getElementById('form-section').style.display = 'block';
+    document.getElementById('result-section').style.display = 'none';
+}
+
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    renderNav('index');
+});
+</script>
+</body>
+</html>

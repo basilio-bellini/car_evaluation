@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarSense — О проекте</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-sidebar: #0d1117;
+            --accent: #2f80ed;
+            --accent-hover: #1366d6;
+            --accent-light: rgba(47, 128, 237, 0.12);
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: rgba(255,255,255,0.08);
+            --success: #3fb950;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            padding: 24px 0;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .nav-section {
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 8px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item:hover {
+            background: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .nav-item i { font-size: 16px; width: 18px; }
+
+        .sidebar-footer {
+            padding: 16px 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Main content ── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            height: 100%;
+        }
+
+        .card-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ── Hero ── */
+        .hero-card {
+            background: linear-gradient(135deg, #1a2744 0%, #0d1117 60%);
+            border: 1px solid rgba(47,128,237,0.2);
+            border-radius: var(--radius);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 240px; height: 240px;
+            background: radial-gradient(circle, rgba(47,128,237,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-card h2 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+
+        .hero-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 600px;
+        }
+
+        /* ── Tech stack ── */
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin: 4px;
+            transition: all 0.15s;
+        }
+
+        .tech-badge:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tech-badge i {
+            font-size: 15px;
+            color: var(--accent);
+        }
+
+        /* ── Method steps ── */
+        .method-step {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .method-step:last-child { margin-bottom: 0; }
+
+        .step-num {
+            width: 32px; height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .step-content h6 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* ── Model comparison ── */
+        .model-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .model-table th {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .model-table td {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .model-table tr:last-child td { border-bottom: none; }
+        .model-table td:first-child { color: var(--text-primary); font-weight: 500; }
+
+        .badge-best {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(63,185,80,0.12);
+            color: #3fb950;
+            border-radius: 20px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* ── Contact ── */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .contact-item:last-child { border-bottom: none; }
+
+        .contact-icon {
+            width: 36px; height: 36px;
+            background: var(--accent-light);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .contact-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* ── Modal ── */
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--text-primary);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 24px;
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .modal-body { padding: 24px; }
+        .btn-close { filter: invert(1); opacity: 0.5; }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            border: none;
+            background: none;
+        }
+
+        .auth-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            padding: 10px 14px;
+        }
+
+        .form-control:focus {
+            background: var(--bg-dark);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 3px rgba(47,128,237,0.15);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 24px;
+            transition: all 0.15s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🚗</div>
+        <div>
+            <div class="logo-text">CarSense</div>
+            <div class="logo-sub">ML оценка авто</div>
+        </div>
+    </div>
+
+    <nav class="nav-section" id="nav-section"></nav>
+
+    <div class="sidebar-footer">
+        <div id="auth-btn-container"></div>
+    </div>
+</aside>
+
+
+<main class="main-content">
+
+    <div class="page-header mb-4">
+        <h1>О проекте</h1>
+        <p>Информация о системе, методах оценки и технологиях</p>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero-card">
+        <h2>CarSense — умная оценка автомобилей</h2>
+        <p>
+            Информационная система для автоматической оценки рыночной стоимости автомобилей
+            на основе технологий машинного обучения. Система анализирует тысячи объявлений
+            с авторынка и предсказывает справедливую цену по характеристикам автомобиля.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Описание проекта -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-title">Описание проекта</div>
+                <div class="card-text">
+                    <p class="mb-3">
+                        CarSense — дипломный проект по разработке информационной системы оценки
+                        стоимости автомобилей с использованием технологий больших данных и машинного обучения.
+                    </p>
+                    <p class="mb-3">
+                        Система решает актуальную задачу для покупателей и продавцов автомобилей —
+                        определение справедливой рыночной цены без необходимости вручную анализировать
+                        сотни объявлений. Достаточно указать характеристики автомобиля и система
+                        мгновенно выдаст оценку на основе реальных рыночных данных.
+                    </p>
+                    <p>
+                        Данные для обучения модели собраны с крупнейшего российского автомобильного
+                        портала Auto.ru с использованием технологий веб-скрапинга.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Стек технологий -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-title">Стек технологий</div>
+                <div>
+                    <div class="tech-badge"><i class="bi bi-filetype-py"></i> Python</div>
+                    <div class="tech-badge"><i class="bi bi-lightning"></i> FastAPI</div>
+                    <div class="tech-badge"><i class="bi bi-robot"></i> CatBoost</div>
+                    <div class="tech-badge"><i class="bi bi-table"></i> Pandas</div>
+                    <div class="tech-badge"><i class="bi bi-database"></i> PostgreSQL</div>
+                    <div class="tech-badge"><i class="bi bi-browser-chrome"></i> Playwright</div>
+                    <div class="tech-badge"><i class="bi bi-box"></i> Scikit-learn</div>
+                    <div class="tech-badge"><i class="bi bi-bar-chart"></i> Optuna</div>
+                    <div class="tech-badge"><i class="bi bi-filetype-html"></i> HTML / JS</div>
+                    <div class="tech-badge"><i class="bi bi-bootstrap"></i> Bootstrap</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Методы оценки -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-title">Методология оценки</div>
+                <div class="method-step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h6>Сбор данных</h6>
+                        <p>Автоматический сбор объявлений с Auto.ru с помощью Playwright. Собрано более 30 000 объявлений о продаже автомобилей с пробегом.</p>
+                    </div>
+                </div>
+                <div class="method-step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h6>Предобработка данных</h6>
+                        <p>Очистка данных, удаление выбросов, кодирование категориальных признаков, нормализация числовых значений.</p>
+                    </div>
+                </div>
+                <div class="method-step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h6>Обучение модели</h6>
+                        <p>Сравнение нескольких алгоритмов машинного обучения. Выбор лучшей модели на основе метрик MAE, RMSE и R².</p>
+                    </div>
+                </div>
+                <div class="method-step">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h6>Оптимизация</h6>
+                        <p>Подбор гиперпараметров с помощью Optuna для достижения наилучшего качества предсказаний.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Сравнение моделей -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-title">Сравнение моделей</div>
+                <table class="model-table">
+                    <thead>
+                        <tr>
+                            <th>Модель</th>
+                            <th>MAE</th>
+                            <th>R²</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Linear Regression</td>
+                            <td>749 650 ₽</td>
+                            <td>0.55</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Random Forest</td>
+                            <td>478 123 ₽</td>
+                            <td>0.78</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>LightGBM</td>
+                            <td>475 190 ₽</td>
+                            <td>0.76</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>XGBoost</td>
+                            <td>431 333 ₽</td>
+                            <td>0.81</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--text-primary)">CatBoost</strong></td>
+                            <td><strong style="color: var(--text-primary)">378 264 ₽</strong></td>
+                            <td><strong style="color: var(--text-primary)">0.86</strong></td>
+                            <td><span class="badge-best"><i class="bi bi-check-circle-fill"></i> Лучшая</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Контакты -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-title">Контакты</div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="bi bi-person-circle"></i></div>
+                            <div>
+                                <div class="contact-label">Автор</div>
+                                <div class="contact-value">Василий Карташов</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="bi bi-envelope"></i></div>
+                            <div>
+                                <div class="contact-label">Email</div>
+                                <div class="contact-value">229378@edu.fa.ru</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="bi bi-github"></i></div>
+                            <div>
+                                <div class="contact-label">GitHub</div>
+                                <div class="contact-value">github.com/basilio-bellini</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- AUTH MODAL -->
+<div class="modal fade" id="authModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добро пожаловать в CarSense</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchTab('login')">Войти</button>
+                    <button class="auth-tab" onclick="switchTab('register')">Зарегистрироваться</button>
+                </div>
+                <div id="login-form">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <label for="login-email"></label><input type="email" class="form-control" id="login-email" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Пароль</label>
+                        <label for="login-password"></label><input type="password" class="form-control" id="login-password" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="login()">Войти</button>
+                    <div id="login-error" class="text-danger mt-2" style="font-size:13px;"></div>
+                </div>
+                <div id="register-form" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <label for="reg-email"></label><input type="email" class="form-control" id="reg-email" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <label for="reg-password"></label><input type="password" class="form-control" id="reg-password" placeholder="Минимум 6 символов">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Подтвердите пароль</label>
+                        <label for="reg-password2"></label><input type="password" class="form-control" id="reg-password2" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="register()">Зарегистрироваться</button>
+                    <div id="register-error" class="text-danger mt-2" style="font-size:13px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../static/js/nav.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        renderNav('index'); // передаём имя активной страницы
+    });
+</script>
+<script>
+const API = 'http://localhost:8000';
+let authModal;
+
+document.addEventListener('DOMContentLoaded', () => {
+    authModal = new bootstrap.Modal(document.getElementById('authModal'));
+    updateAuthUI();
+});
+
+function updateAuthUI() {
+    const token = localStorage.getItem('token');
+    const container = document.getElementById('auth-btn-container');
+    if (token) {
+        container.innerHTML = `<button class="nav-item" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i> Выйти
+        </button>`;
+    } else {
+        container.innerHTML = `<button class="nav-item" onclick="openAuthModal()">
+            <i class="bi bi-box-arrow-in-right"></i> Войти
+        </button>`;
+    }
+}
+
+function requireAuth(page) {
+    const token = localStorage.getItem('token');
+    if (token) {
+        window.location.href = page;
+    } else {
+        openAuthModal();
+    }
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach((t, i) => {
+        t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+    });
+    document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+async function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const formData = new FormData();
+    formData.append('username', email);
+    formData.append('password', password);
+    try {
+        const res = await fetch(`${API}/auth/login`, { method: 'POST', body: formData });
+        const data = await res.json();
+        if (res.ok) {
+            localStorage.setItem('token', data.access_token);
+            authModal.hide();
+            updateAuthUI();
+        } else {
+            document.getElementById('login-error').textContent = data.detail || 'Ошибка входа';
+        }
+    } catch (e) {
+        document.getElementById('login-error').textContent = 'Ошибка соединения с сервером';
+    }
+}
+
+async function register() {
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    const password2 = document.getElementById('reg-password2').value;
+    if (password !== password2) {
+        document.getElementById('register-error').textContent = 'Пароли не совпадают';
+        return;
+    }
+    try {
+        const res = await fetch(`${API}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            switchTab('login');
+            document.getElementById('login-email').value = email;
+        } else {
+            document.getElementById('register-error').textContent = data.detail || 'Ошибка регистрации';
+        }
+    } catch (e) {
+        document.getElementById('register-error').textContent = 'Ошибка соединения с сервером';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    updateAuthUI();
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    renderNav('about');
+});
+</script>
+</body>
+</html>

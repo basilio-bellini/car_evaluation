@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarSense — Администрирование</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-sidebar: #0d1117;
+            --accent: #2f80ed;
+            --accent-hover: #1366d6;
+            --accent-light: rgba(47, 128, 237, 0.12);
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: rgba(255,255,255,0.08);
+            --success: #3fb950;
+            --danger: #f85149;
+            --warning: #d29922;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            padding: 24px 0;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .nav-section {
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 8px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item:hover {
+            background: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .nav-item i { font-size: 16px; width: 18px; }
+
+        .sidebar-footer {
+            padding: 16px 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Main content ── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        /* ── Search ── */
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .search-bar input {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            padding: 10px 14px 10px 36px;
+            width: 100%;
+            transition: border-color 0.15s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.15);
+        }
+
+        .search-bar input::placeholder { color: var(--text-secondary); }
+
+        /* ── Filter select ── */
+        .filter-select {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            padding: 9px 14px;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .filter-select option { background: var(--bg-card); }
+
+        /* ── Table ── */
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table thead tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .users-table th {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 0 16px 14px;
+            text-align: left;
+        }
+
+        .users-table th:last-child { text-align: right; }
+
+        .users-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+
+        .users-table tbody tr:last-child { border-bottom: none; }
+
+        .users-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+        .users-table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .users-table td.muted { color: var(--text-secondary); font-size: 13px; }
+
+        /* ── Badges ── */
+        .badge-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 6px;
+            padding: 3px 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-admin {
+            background: rgba(47, 128, 237, 0.12);
+            color: var(--accent);
+        }
+
+        .badge-user {
+            background: rgba(139, 148, 158, 0.12);
+            color: var(--text-secondary);
+        }
+
+        /* ── Action buttons ── */
+        .action-btn {
+            width: 30px; height: 30px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+        .action-btn.delete:hover { background: rgba(248,81,73,0.1); border-color: var(--danger); color: var(--danger); }
+
+        /* ── Pagination ── */
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .page-btn {
+            width: 32px; height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ── Modal ── */
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--text-primary);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 24px;
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .modal-body { padding: 24px; }
+        .modal-footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 24px;
+        }
+
+        .btn-close { filter: invert(1); opacity: 0.5; }
+
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.15s;
+        }
+
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        .btn-danger {
+            background: var(--danger);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            padding: 10px 20px;
+        }
+
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-select {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            padding: 10px 14px;
+        }
+
+        .form-select:focus {
+            background: var(--bg-dark);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.15);
+        }
+
+        .form-select option { background: var(--bg-card); }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i { font-size: 40px; margin-bottom: 12px; display: block; }
+        .empty-state p { font-size: 14px; }
+
+        /* ── Loading ── */
+        .loading-row td {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════ -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🚗</div>
+        <div>
+            <div class="logo-text">CarSense</div>
+            <div class="logo-sub">Администрирование</div>
+        </div>
+    </div>
+
+    <nav class="nav-section" id="nav-section"></nav>
+
+    <div class="sidebar-footer">
+        <button class="nav-item" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i> Выйти
+        </button>
+    </div>
+</aside>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════ -->
+<main class="main-content">
+    <div class="page-header d-flex justify-content-between align-items-start">
+        <div>
+            <h1>Управление пользователями</h1>
+            <p>Просмотр и управление аккаунтами пользователей</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <!-- Фильтры -->
+        <div class="d-flex gap-3 mb-4 align-items-center">
+            <div class="search-bar flex-grow-1">
+                <i class="bi bi-search"></i>
+                <input type="text" id="search-input" placeholder="Поиск по email..." oninput="filterUsers()">
+            </div>
+            <select class="filter-select" id="role-filter" onchange="filterUsers()">
+                <option value="">Все роли</option>
+                <option value="user">Пользователь</option>
+                <option value="admin">Администратор</option>
+            </select>
+        </div>
+
+        <!-- Таблица -->
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                    <th>Дата регистрации</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="users-tbody">
+                <tr class="loading-row">
+                    <td colspan="5">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        Загрузка пользователей...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Пагинация -->
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3" style="border-top: 1px solid var(--border);">
+            <div class="pagination-info" id="pagination-info">—</div>
+            <div class="d-flex gap-1" id="pagination-btns"></div>
+        </div>
+    </div>
+</main>
+
+<!-- ══════════════════════════════════════
+     MODAL — Смена роли
+════════════════════════════════════════ -->
+<div class="modal fade" id="roleModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Изменить роль</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3" style="font-size:14px; color: var(--text-secondary);">
+                    Пользователь: <span id="role-modal-email" style="color: var(--text-primary); font-weight:500;"></span>
+                </p>
+                <label class="form-label">Новая роль</label>
+                <select class="form-select" id="role-select">
+                    <option value="user">Пользователь</option>
+                    <option value="admin">Администратор</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button class="btn-primary" onclick="confirmRoleChange()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL — Удаление
+════════════════════════════════════════ -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Удалить пользователя</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:14px; color: var(--text-secondary);">
+                    Вы уверены что хотите удалить пользователя
+                    <span id="delete-modal-email" style="color: var(--danger); font-weight:500;"></span>?
+                    Это действие нельзя отменить.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button class="btn-danger" onclick="confirmDelete()">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API = 'http://localhost:8000';
+const PAGE_SIZE = 10;
+
+let allUsers = [];
+let filteredUsers = [];
+let currentPage = 1;
+let selectedUserId = null;
+let roleModal, deleteModal;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    roleModal = new bootstrap.Modal(document.getElementById('roleModal'));
+    deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    await checkAdminAccess();
+    await loadUsers();
+});
+
+// ── Проверка доступа ──
+async function checkAdminAccess() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/';
+        return;
+    }
+    try {
+        const res = await fetch(`${API}/admin/users`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.status === 403 || res.status === 401) {
+            window.location.href = '/';
+        }
+    } catch {
+        window.location.href = '/';
+    }
+}
+
+// ── Загрузка пользователей ──
+async function loadUsers() {
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch(`${API}/admin/users`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        allUsers = await res.json();
+        filteredUsers = [...allUsers];
+        renderTable();
+    } catch {
+        document.getElementById('users-tbody').innerHTML = `
+            <tr class="loading-row"><td colspan="5">Ошибка загрузки данных</td></tr>`;
+    }
+}
+
+// ── Фильтрация ──
+function filterUsers() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const role = document.getElementById('role-filter').value;
+
+    filteredUsers = allUsers.filter(u => {
+        const matchSearch = u.email.toLowerCase().includes(search);
+        const matchRole = role ? u.role === role : true;
+        return matchSearch && matchRole;
+    });
+
+    currentPage = 1;
+    renderTable();
+}
+
+// ── Рендер таблицы ──
+function renderTable() {
+    const tbody = document.getElementById('users-tbody');
+    const total = filteredUsers.length;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = Math.min(start + PAGE_SIZE, total);
+    const pageUsers = filteredUsers.slice(start, end);
+
+    if (pageUsers.length === 0) {
+        tbody.innerHTML = `
+            <tr><td colspan="5">
+                <div class="empty-state">
+                    <i class="bi bi-people"></i>
+                    <p>Пользователи не найдены</p>
+                </div>
+            </td></tr>`;
+    } else {
+        tbody.innerHTML = pageUsers.map(u => `
+            <tr>
+                <td class="muted">${u.id}</td>
+                <td>${u.email}</td>
+                <td>
+                    <span class="badge-role ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">
+                        <i class="bi ${u.role === 'admin' ? 'bi-shield-check' : 'bi-person'}"></i>
+                        ${u.role === 'admin' ? 'Администратор' : 'Пользователь'}
+                    </span>
+                </td>
+                <td class="muted">${formatDate(u.created_at)}</td>
+                <td style="text-align:right;">
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button class="action-btn" onclick="openRoleModal(${u.id}, '${u.email}', '${u.role}')" title="Изменить роль">
+                            <i class="bi bi-shield"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="openDeleteModal(${u.id}, '${u.email}')" title="Удалить">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Пагинация
+    document.getElementById('pagination-info').textContent =
+        total > 0 ? `Показано ${start + 1}–${end} из ${total}` : 'Нет результатов';
+
+    const btns = document.getElementById('pagination-btns');
+    btns.innerHTML = '';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn';
+    prevBtn.innerHTML = '<i class="bi bi-chevron-left"></i>';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { currentPage--; renderTable(); };
+    btns.appendChild(prevBtn);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+        btn.textContent = i;
+        btn.onclick = () => { currentPage = i; renderTable(); };
+        btns.appendChild(btn);
+    }
+
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn';
+    nextBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+    nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+    nextBtn.onclick = () => { currentPage++; renderTable(); };
+    btns.appendChild(nextBtn);
+}
+
+// ── Модалка смены роли ──
+function openRoleModal(id, email, currentRole) {
+    selectedUserId = id;
+    document.getElementById('role-modal-email').textContent = email;
+    document.getElementById('role-select').value = currentRole;
+    roleModal.show();
+}
+
+async function confirmRoleChange() {
+    const token = localStorage.getItem('token');
+    const role = document.getElementById('role-select').value;
+    try {
+        const res = await fetch(`${API}/admin/users/${selectedUserId}/role?role=${role}`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            roleModal.hide();
+            await loadUsers();
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// ── Модалка удаления ──
+function openDeleteModal(id, email) {
+    selectedUserId = id;
+    document.getElementById('delete-modal-email').textContent = email;
+    deleteModal.show();
+}
+
+async function confirmDelete() {
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch(`${API}/admin/users/${selectedUserId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok || res.status === 204) {
+            deleteModal.hide();
+            await loadUsers();
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// ── Утилиты ──
+function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ru-RU', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+}
+
+function goToProfile() {
+    window.location.href = '/profile';
+}
+</script>
+<script src="../static/js/nav.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        renderNav('index'); // передаём имя активной страницы
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    renderNav('admin');
+});
+</script>
+</body>
+</html>
