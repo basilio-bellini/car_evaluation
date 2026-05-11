@@ -8,7 +8,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
 
 
-df = pd.read_csv("../data/processed/cars.csv")
+df = pd.read_csv("../data/processed/cars_v2.csv")
 X = df.drop(columns=["price", "url", "description"])
 y = df["price"]
 

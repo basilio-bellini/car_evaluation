@@ -9,7 +9,7 @@ from xgboost import XGBRegressor
 import optuna
 
 
-df = pd.read_csv("../data/processed/cars.csv")
+df = pd.read_csv("../data/processed/cars_v2.csv")
 X = df.drop(columns=["price", "url", "description"])
 y = df["price"]
 
