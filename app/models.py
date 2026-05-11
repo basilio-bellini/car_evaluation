@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 import enum
@@ -16,12 +17,16 @@ class User(Base):
     role = Column(Enum(RoleEnum), default=RoleEnum.user, nullable=False)
     created_at = Column(DateTime, default=func.now())
 
+    predictions = relationship(
+        "Prediction", back_populates="user", cascade="all, delete-orphan"
+    )
+
 
 class Prediction(Base):
     __tablename__ = "predictions"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
 
     brand = Column(String)
     model = Column(String)
@@ -40,3 +45,5 @@ class Prediction(Base):
 
     predicted_price = Column(Float)
     created_at = Column(DateTime, default=func.now())
+
+    user = relationship("User", back_populates="predictions")
