@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АвтоРазум — История оценок</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-sidebar: #0d1117;
+            --accent: #2f80ed;
+            --accent-hover: #1366d6;
+            --accent-light: rgba(47, 128, 237, 0.12);
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: rgba(255,255,255,0.08);
+            --success: #3fb950;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            padding: 24px 0;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 72px;
+            height: auto;
+        }
+
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .nav-section { padding: 0 12px; flex: 1; }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 8px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item:hover { background: var(--accent-light); color: var(--text-primary); }
+        .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+        .nav-item i { font-size: 16px; width: 18px; }
+
+        .sidebar-footer {
+            padding: 16px 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Main ── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        /* ── Table ── */
+        .history-table { width: 100%; border-collapse: collapse; }
+
+        .history-table thead tr { border-bottom: 1px solid var(--border); }
+
+        .history-table th {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 0 16px 14px;
+            text-align: left;
+        }
+
+        .history-table th:last-child { text-align: right; }
+
+        .history-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+            cursor: pointer;
+        }
+
+        .history-table tbody tr:last-child { border-bottom: none; }
+        .history-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+        .history-table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .history-table td.muted { color: var(--text-secondary); font-size: 13px; }
+
+        /* ── Price badge ── */
+        .price-badge {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--accent);
+        }
+
+        /* ── Action btn ── */
+        .action-btn {
+            width: 30px; height: 30px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+        /* ── Pagination ── */
+        .pagination-info { font-size: 13px; color: var(--text-secondary); }
+
+        .page-btn {
+            width: 32px; height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover, .page-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 64px 48px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i { font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.4; }
+        .empty-state h3 { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--text-primary); margin-bottom: 8px; }
+        .empty-state p { font-size: 14px; }
+
+        .empty-state .btn-primary {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            margin-top: 20px;
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .empty-state .btn-primary:hover { background: var(--accent-hover); }
+
+        /* ── Loading ── */
+        .loading-row td { text-align: center; padding: 48px; color: var(--text-secondary); font-size: 14px; }
+
+        /* ── Modal ── */
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--text-primary);
+        }
+
+        .modal-header { border-bottom: 1px solid var(--border); padding: 20px 24px; }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .modal-body { padding: 24px; }
+        .btn-close { filter: invert(1); opacity: 0.5; }
+
+        /* ── Detail sections ── */
+        .detail-price {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 36px;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .detail-price span { font-size: 24px; color: var(--text-secondary); }
+
+        .detail-range {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .badge-accuracy {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(63, 185, 80, 0.12);
+            color: var(--success);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .detail-section-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .detail-item { display: flex; flex-direction: column; gap: 2px; }
+        .detail-label { font-size: 11px; color: var(--text-secondary); }
+        .detail-value { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+
+        .detail-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .btn-new-estimate {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-new-estimate:hover { background: var(--accent-hover); color: white; }
+
+        .action-btn.delete:hover {
+            background: rgba(248,81,73,0.1);
+            border-color: #f85149;
+            color: #f85149;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px var(--bg-dark) inset !important;
+            -webkit-text-fill-color: var(--text-primary) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <img class="logo-icon" src="../static/images/logo.png" alt="АвтоРазум">
+        <div>
+            <div class="logo-text">АвтоРазум</div>
+            <div class="logo-sub">ML оценка авто</div>
+        </div>
+    </div>
+    <nav class="nav-section" id="nav-section"></nav>
+    <div class="sidebar-footer">
+        <div id="auth-btn-container"></div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="page-header mb-4 d-flex justify-content-between align-items-start">
+        <div>
+            <h1>История оценок</h1>
+            <p>Ваши предыдущие запросы на оценку автомобилей</p>
+        </div>
+        <a href="/" class="btn-new-estimate">
+            <i class="bi bi-plus-lg"></i> Новая оценка
+        </a>
+    </div>
+
+    <div class="card">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Автомобиль</th>
+                    <th>Год / Пробег</th>
+                    <th>Двигатель</th>
+                    <th>Оценка</th>
+                    <th>Дата</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="history-tbody">
+                <tr class="loading-row">
+                    <td colspan="6">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        Загрузка истории...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3" style="border-top: 1px solid var(--border);">
+            <div class="pagination-info" id="pagination-info">—</div>
+            <div class="d-flex gap-1" id="pagination-btns"></div>
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="detailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-car-title">—</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Цена -->
+                <div class=" mb-1" style="font-size:12px;">Рыночная оценка</div>
+                <div class="detail-price" id="modal-price">— <span>₽</span></div>
+                <div class="detail-range" id="modal-range"></div>
+                <div class="badge-accuracy">
+                    <i class="bi bi-patch-check-fill"></i> Высокая точность
+                </div>
+                <div class="detail-date" id="modal-date"></div>
+
+                <!-- Основные параметры -->
+                <div class="detail-section-title">Параметры автомобиля</div>
+                <div class="detail-grid" id="modal-params"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../static/js/nav.js"></script>
+<script>
+const API = 'http://localhost:8000';
+const PAGE_SIZE = 10;
+
+let allHistory = [];
+let currentPage = 1;
+let detailModal;
+
+const transLabels = { AUTOMATIC: 'Автомат', MECHANICAL: 'Механика', ROBOT: 'Робот', VARIATOR: 'Вариатор' };
+const gearLabels = { FORWARD_CONTROL: 'Передний', REAR_DRIVE: 'Задний', ALL_WHEEL_DRIVE: 'Полный' };
+const fuelLabels = { GASOLINE: 'Бензин', DIESEL: 'Дизель', HYBRID: 'Гибрид' };
+const bodyLabels = {
+    SEDAN: 'Седан', ALLROAD_5_DOORS: 'Кроссовер', HATCHBACK_5_DOORS: 'Хэтчбек',
+    WAGON_5_DOORS: 'Универсал', COUPE: 'Купе', MINIVAN: 'Минивэн',
+    LIFTBACK: 'Лифтбек', OTHER: 'Другое'
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+    detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+    await renderNav('history');
+    await loadHistory();
+});
+
+async function loadHistory() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/';
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/history/`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+            window.location.href = '/';
+            return;
+        }
+
+        allHistory = await res.json();
+        renderTable();
+    } catch (e) {
+        document.getElementById('history-tbody').innerHTML = `
+            <tr class="loading-row"><td colspan="6">Ошибка загрузки данных</td></tr>`;
+    }
+}
+
+function renderTable() {
+    const tbody = document.getElementById('history-tbody');
+    const total = allHistory.length;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = Math.min(start + PAGE_SIZE, total);
+    const pageItems = allHistory.slice(start, end);
+
+    if (pageItems.length === 0) {
+        tbody.innerHTML = `
+            <tr><td colspan="6">
+                <div class="empty-state">
+                    <i class="bi bi-clock-history"></i>
+                    <h3>История пуста</h3>
+                    <p>Вы ещё не делали запросов на оценку автомобиля</p>
+                    <a href="/predict" class="btn-primary">Оценить автомобиль</a>
+                </div>
+            </td></tr>`;
+    } else {
+        tbody.innerHTML = pageItems.map(item => `
+            <tr onclick="openDetail(${item.id})">
+                <td>
+                    <div style="font-weight:500;">${item.brand} ${item.model}</div>
+                    <div style="font-size:12px; color: var(--text-secondary);">${bodyLabels[item.body_type] || item.body_type}</div>
+                </td>
+                <td class="muted">
+                    ${item.year} г.<br>
+                    ${new Intl.NumberFormat('ru-RU').format(item.mileage)} км
+                </td>
+                <td class="muted">
+                    ${item.displacement} л / ${item.power} л.с.<br>
+                    ${fuelLabels[item.engine_type] || item.engine_type}
+                </td>
+                <td>
+                    <span class="price-badge">
+                        ${new Intl.NumberFormat('ru-RU').format(Math.round(item.predicted_price))} ₽
+                    </span>
+                </td>
+                <td class="muted">${formatDate(item.created_at)}</td>
+                <td style="text-align:right;">
+                    <button class="action-btn" onclick="event.stopPropagation(); openDetail(${item.id})" title="Подробнее">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="event.stopPropagation(); confirmDelete(${item.id})" title="Удалить">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Пагинация
+    document.getElementById('pagination-info').textContent =
+        total > 0 ? `Показано ${start + 1}–${end} из ${total}` : 'Нет записей';
+
+    const btns = document.getElementById('pagination-btns');
+    btns.innerHTML = '';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn';
+    prevBtn.innerHTML = '<i class="bi bi-chevron-left"></i>';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { currentPage--; renderTable(); };
+    btns.appendChild(prevBtn);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+        btn.textContent = i;
+        btn.onclick = () => { currentPage = i; renderTable(); };
+        btns.appendChild(btn);
+    }
+
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn';
+    nextBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+    nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+    nextBtn.onclick = () => { currentPage++; renderTable(); };
+    btns.appendChild(nextBtn);
+}
+
+function openDetail(id) {
+    const item = allHistory.find(h => h.id === id);
+    if (!item) return;
+
+    document.getElementById('modal-car-title').textContent = `${item.brand} ${item.model}`;
+
+    const price = Math.round(item.predicted_price);
+    const low = new Intl.NumberFormat('ru-RU').format(Math.round(price * 0.92));
+    const high = new Intl.NumberFormat('ru-RU').format(Math.round(price * 1.08));
+
+    document.getElementById('modal-price').innerHTML =
+        `${new Intl.NumberFormat('ru-RU').format(price)} <span>₽</span>`;
+    document.getElementById('modal-range').textContent = `Диапазон: ${low} — ${high} ₽`;
+    document.getElementById('modal-date').textContent = `Дата оценки: ${formatDate(item.created_at)}`;
+
+    const params = [
+        ['Год выпуска', `${item.year} г.`],
+        ['Пробег', `${new Intl.NumberFormat('ru-RU').format(item.mileage)} км`],
+        ['Марка', item.brand],
+        ['Модель', item.model],
+        ['Тип кузова', bodyLabels[item.body_type] || item.body_type],
+        ['Класс авто', item.auto_class],
+        ['Двигатель', `${item.displacement} л / ${item.power} л.с.`],
+        ['Тип топлива', fuelLabels[item.engine_type] || item.engine_type],
+        ['Коробка передач', transLabels[item.transmission] || item.transmission],
+        ['Привод', gearLabels[item.gear_type] || item.gear_type],
+        ['Владельцев', item.owners_number],
+        ['Состояние', item.accidents === 'OK' ? 'Не битый' : 'Есть ДТП'],
+        ['Цвет', item.color],
+    ];
+
+    document.getElementById('modal-params').innerHTML = params.map(([label, value]) => `
+        <div class="detail-item">
+            <span class="detail-label">${label}</span>
+            <span class="detail-value">${value}</span>
+        </div>
+    `).join('');
+
+    detailModal.show();
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ru-RU', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+let deleteModal;
+let selectedDeleteId = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+    deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    await renderNav('history');
+    await loadHistory();
+});
+
+function confirmDelete(id) {
+    selectedDeleteId = id;
+    deleteModal.show();
+}
+
+function confirmDeleteFromModal() {
+    const title = document.getElementById('modal-car-title').textContent;
+    const item = allHistory.find(h => `${h.brand} ${h.model}` === title);
+    if (item) {
+        detailModal.hide();
+        setTimeout(() => confirmDelete(item.id), 300);
+    }
+}
+
+async function deleteConfirmed() {
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch(`${API}/history/${selectedDeleteId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            deleteModal.hide();
+            allHistory = allHistory.filter(h => h.id !== selectedDeleteId);
+            const totalPages = Math.ceil(allHistory.length / PAGE_SIZE);
+            if (currentPage > totalPages && currentPage > 1) {
+                currentPage--;
+            }
+            renderTable();
+        }
+    } catch (e) {
+        console.error('Ошибка удаления:', e);
+    }
+}
+</script>
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Удалить запись</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:14px; color: var(--text-secondary);">
+                    Вы уверены что хотите удалить эту запись из истории? Действие нельзя отменить.
+                </p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--border); padding: 16px 24px;">
+                <button class="btn-secondary" data-bs-dismiss="modal"
+                        style="background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-size: 14px; padding: 10px 20px; cursor: pointer;">
+                    Отмена
+                </button>
+                <button onclick="deleteConfirmed()"
+                        style="background: #f85149; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; padding: 10px 20px; color: white; cursor: pointer;">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

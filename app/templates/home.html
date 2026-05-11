@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АвтоРазум — Оценка автомобилей на основе ML</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e17;
+            --accent: #2f80ed;
+            --accent2: #56a3ff;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ── Фоновая сетка ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(47,128,237,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(47,128,237,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        /* ── Свечение ── */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(47,128,237,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px 24px;
+            max-width: 640px;
+            animation: fadeUp 0.8s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 52px;
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+
+        .logo-icon {
+            height: 96px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.3px;
+        }
+
+        /* ── Заголовок ── */
+        .headline {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(36px, 6vw, 64px);
+            line-height: 1.08;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .headline .accent {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── Подзаголовок ── */
+        .subtitle {
+            font-size: 17px;
+            font-weight: 300;
+            color: var(--muted);
+            line-height: 1.6;
+            max-width: 480px;
+            margin: 0 auto 48px;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+
+        /* ── Кнопка ── */
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 16px 36px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 32px rgba(47,128,237,0.35);
+            animation: fadeUp 0.8s ease 0.4s both;
+            letter-spacing: -0.2px;
+        }
+
+        .cta-btn:hover {
+            background: #1a6fd4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(47,128,237,0.5);
+            color: white;
+            text-decoration: none;
+        }
+
+        .cta-btn svg {
+            transition: transform 0.2s;
+        }
+
+        .cta-btn:hover svg {
+            transform: translateX(3px);
+        }
+
+        /* ── Нижняя подпись ── */
+        .footer-note {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--muted);
+            opacity: 0.5;
+            white-space: nowrap;
+            animation: fadeUp 0.8s ease 0.6s both;
+        }
+
+        /* ── Декоративные точки ── */
+        .dots {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            animation: fadeUp 0.8s ease 0.5s both;
+        }
+
+        .dot {
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px rgba(47,128,237,0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">
+            <img class="logo-icon" src="../static/images/logo.png" alt="АвтоРазум">
+            <span class="logo-text">АвтоРазум</span>
+        </div>
+
+        <h1 class="headline">
+            Узнайте реальную<br>
+            <span class="accent">стоимость авто</span>
+        </h1>
+
+        <p class="subtitle">
+            Система машинного обучения анализирует тысячи объявлений
+            и даёт точную рыночную оценку автомобиля за секунды
+        </p>
+
+        <a href="/predict" class="cta-btn">
+            Оценить автомобиль
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    </div>
+
+</body>
+</html>

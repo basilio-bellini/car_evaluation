@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarSense — Профиль</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-sidebar: #0d1117;
+            --accent: #2f80ed;
+            --accent-hover: #1366d6;
+            --accent-light: rgba(47, 128, 237, 0.12);
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: rgba(255,255,255,0.08);
+            --success: #3fb950;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            padding: 24px 0;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .nav-section { padding: 0 12px; flex: 1; }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 8px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item:hover { background: var(--accent-light); color: var(--text-primary); }
+        .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+        .nav-item i { font-size: 16px; width: 18px; }
+
+        .sidebar-footer {
+            padding: 16px 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Main ── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .card-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        /* ── Avatar ── */
+        .avatar {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        /* ── Info rows ── */
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row:last-child { border-bottom: none; }
+
+        .info-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* ── Role badge ── */
+        .badge-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-admin {
+            background: rgba(47, 128, 237, 0.12);
+            color: var(--accent);
+        }
+
+        .badge-user {
+            background: rgba(139, 148, 158, 0.12);
+            color: var(--text-secondary);
+        }
+
+        /* ── Danger zone ── */
+        .danger-zone {
+            border: 1px solid rgba(248, 81, 73, 0.2);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            background: rgba(248, 81, 73, 0.04);
+        }
+
+        .danger-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #f85149;
+            margin-bottom: 8px;
+        }
+
+        .danger-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .btn-danger-outline {
+            background: none;
+            border: 1px solid rgba(248, 81, 73, 0.4);
+            border-radius: 8px;
+            color: #f85149;
+            font-size: 13px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-danger-outline:hover {
+            background: rgba(248, 81, 73, 0.1);
+            border-color: #f85149;
+        }
+
+        /* ── Loading ── */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,0.04) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+            height: 16px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🚗</div>
+        <div>
+            <div class="logo-text">CarSense</div>
+            <div class="logo-sub">ML оценка авто</div>
+        </div>
+    </div>
+    <nav class="nav-section" id="nav-section"></nav>
+    <div class="sidebar-footer">
+        <div id="auth-btn-container"></div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="page-header mb-4">
+        <h1>Профиль</h1>
+        <p>Информация о вашем аккаунте</p>
+    </div>
+
+    <div class="row g-4" style="max-width: 640px;">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="avatar" id="avatar-letter">—</div>
+                    <div>
+                        <div style="font-family: 'Syne', sans-serif; font-weight: 600; font-size: 16px; color: white" id="profile-email">
+                            <div class="skeleton" style="width: 180px;"></div>
+                        </div>
+                        <div style="margin-top: 6px;" id="profile-role-badge"></div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="info-email">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Роль</span>
+                    <span class="info-value" id="info-role">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Дата регистрации</span>
+                    <span class="info-value" id="info-date">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">ID пользователя</span>
+                    <span class="info-value" id="info-id" style="color: var(--text-secondary); font-size: 13px;">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Выход -->
+        <div class="col-12">
+            <div class="danger-zone">
+                <div class="danger-title">Выход из аккаунта</div>
+                <div class="danger-desc">После выхода потребуется повторная авторизация для доступа к истории оценок.</div>
+                <button class="btn-danger-outline" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Выйти из аккаунта
+                </button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../static/js/nav.js"></script>
+<script>
+const API = 'http://localhost:8000';
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await renderNav('profile');
+    await loadProfile();
+});
+
+async function loadProfile() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/';
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+            window.location.href = '/';
+            return;
+        }
+
+        const user = await res.json();
+        renderProfile(user);
+    } catch (e) {
+        console.error('Ошибка загрузки профиля:', e);
+    }
+}
+
+function renderProfile(user) {
+    // Аватар — первая буква email
+    const letter = user.email.charAt(0).toUpperCase();
+    document.getElementById('avatar-letter').textContent = letter;
+
+    // Email
+    document.getElementById('profile-email').textContent = user.email;
+    document.getElementById('info-email').textContent = user.email;
+
+    // Роль
+    const isAdmin = user.role === 'admin';
+    const roleName = isAdmin ? 'Администратор' : 'Пользователь';
+    const roleIcon = isAdmin ? 'bi-shield-check' : 'bi-person';
+    const roleClass = isAdmin ? 'badge-admin' : 'badge-user';
+
+    document.getElementById('profile-role-badge').innerHTML = `
+        <span class="badge-role ${roleClass}">
+            <i class="bi ${roleIcon}"></i> ${roleName}
+        </span>`;
+
+    document.getElementById('info-role').innerHTML = `
+        <span class="badge-role ${roleClass}">
+            <i class="bi ${roleIcon}"></i> ${roleName}
+        </span>`;
+
+    // Дата регистрации
+    document.getElementById('info-date').textContent = formatDate(user.created_at);
+
+    // ID
+    document.getElementById('info-id').textContent = `#${user.id}`;
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ru-RU', {
+        day: '2-digit', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+</script>
+</body>
+</html>
