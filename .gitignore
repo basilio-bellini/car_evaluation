@@ -207,7 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 .idea/
-data/raw/*.json
+data/raw/*.jsonl
 data/raw/*.csv
 data/processed/*.json
 data/processed/*.csv
