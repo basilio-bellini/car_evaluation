@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import csv
 
 COLOR_MAP = {
     'FAFBFB': 'белый',
@@ -19,8 +20,17 @@ COLOR_MAP = {
     'C49648': 'бежевый',
 }
 
-with open("../data/raw/offers.json", "r", encoding="utf-8") as f:
-    offers = json.load(f)
+offers = []
+with open("../data/raw/offers_with_descriptions.jsonl", "r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            offers.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+print(f"Загружено объявлений: {len(offers)}")
 
 rows = []
 for offer in offers:
@@ -50,13 +60,15 @@ for offer in offers:
 
 df = pd.DataFrame(rows)
 print(f"Итого строк: {len(df)}")
-print(df.head())
 
-df = df[df["description"].str.strip() != ""]
+df = df[df["description"].notna()]
 print(f"После удаления пустых описаний: {len(df)}")
 
 df = df.drop_duplicates(subset='url')
 print(f"После удаления дублей: {len(df)}")
 
-df.to_csv("../data/processed/cars.csv", index=False, encoding="utf-8-sig")
-print("Сохранено в data/processed/cars.csv")
+df.to_csv("../data/processed/cars_v2.csv",
+          index=False,
+          encoding="utf-8-sig",
+          quoting=csv.QUOTE_ALL)
+print("Сохранено в data/processed/cars_v2.csv")
