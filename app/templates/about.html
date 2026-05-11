@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarSense — О проекте</title>
+    <title>Авторазум — О проекте</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -57,11 +57,8 @@
         }
 
         .logo-icon {
-            width: 36px; height: 36px;
-            background: var(--accent);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
+            width: 72px;
+            height: auto;
         }
 
         .logo-text {
@@ -440,6 +437,14 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px var(--bg-dark) inset !important;
+            -webkit-text-fill-color: var(--text-primary) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
     </style>
 </head>
 <body>
@@ -447,9 +452,9 @@
 
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <div class="logo-icon">🚗</div>
+        <img class="logo-icon" src="../static/images/logo.png" alt="АвтоРазум">
         <div>
-            <div class="logo-text">CarSense</div>
+            <div class="logo-text">АвтоРазум</div>
             <div class="logo-sub">ML оценка авто</div>
         </div>
     </div>
@@ -471,7 +476,7 @@
 
     <!-- Hero -->
     <div class="hero-card">
-        <h2>CarSense — умная оценка автомобилей</h2>
+        <h2>АвтоРазум — умная оценка автомобилей</h2>
         <p>
             Информационная система для автоматической оценки рыночной стоимости автомобилей
             на основе технологий машинного обучения. Система анализирует тысячи объявлений
@@ -487,7 +492,7 @@
                 <div class="card-title">Описание проекта</div>
                 <div class="card-text">
                     <p class="mb-3">
-                        CarSense — дипломный проект по разработке информационной системы оценки
+                        АвтоРазум — дипломный проект по разработке информационной системы оценки
                         стоимости автомобилей с использованием технологий больших данных и машинного обучения.
                     </p>
                     <p class="mb-3">
@@ -651,7 +656,7 @@
     <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Добро пожаловать в CarSense</h5>
+                <h5 class="modal-title">Добро пожаловать в АвтоРазум</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -696,7 +701,7 @@
 <script src="../static/js/nav.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        renderNav('index'); // передаём имя активной страницы
+        renderNav('index');
     });
 </script>
 <script>
@@ -750,8 +755,16 @@ async function login() {
         const data = await res.json();
         if (res.ok) {
             localStorage.setItem('token', data.access_token);
+            const userRes = await fetch(`${API}/auth/me`, {
+                headers: { 'Authorization': `Bearer ${data.access_token}` }
+            });
+            const user = await userRes.json();
             authModal.hide();
-            updateAuthUI();
+            if (user.role === 'admin') {
+                window.location.href = '/admin';
+            } else {
+                updateAuthUI();
+            }
         } else {
             document.getElementById('login-error').textContent = data.detail || 'Ошибка входа';
         }
@@ -784,11 +797,6 @@ async function register() {
     } catch (e) {
         document.getElementById('register-error').textContent = 'Ошибка соединения с сервером';
     }
-}
-
-function logout() {
-    localStorage.removeItem('token');
-    updateAuthUI();
 }
 </script>
 <script>

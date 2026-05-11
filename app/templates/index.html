@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarSense — Оценка автомобиля</title>
+    <title>АвтоРазум — Оценка автомобиля</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -57,11 +57,8 @@
         }
 
         .logo-icon {
-            width: 36px; height: 36px;
-            background: var(--accent);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
+            width: 72px;
+            height: auto;
         }
 
         .logo-text {
@@ -132,7 +129,6 @@
             margin: 0 0;
         }
 
-        /* ── Main content ── */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
@@ -154,7 +150,6 @@
             margin-top: 4px;
         }
 
-        /* ── Cards ── */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -170,7 +165,6 @@
             margin-bottom: 20px;
         }
 
-        /* ── Form elements ── */
         .form-label {
             font-size: 12px;
             font-weight: 500;
@@ -204,7 +198,6 @@
 
         .form-control::placeholder { color: var(--text-secondary); }
 
-        /* ── Buttons ── */
         .btn-primary {
             background: var(--accent);
             border: none;
@@ -235,7 +228,6 @@
             color: var(--accent);
         }
 
-        /* ── How it works block ── */
         .how-it-works {
             background: linear-gradient(135deg, rgba(47,128,237,0.1) 0%, rgba(47,128,237,0.05) 100%);
             border: 1px solid rgba(47,128,237,0.2);
@@ -286,13 +278,12 @@
             line-height: 1.5;
         }
 
-        /* ── Result card ── */
         .result-card {
             display: none;
         }
 
         .result-price {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Manrope', sans-serif;
             font-weight: 800;
             font-size: 42px;
             color: var(--text-primary);
@@ -334,7 +325,6 @@
         .params-table td:first-child { color: var(--text-secondary); }
         .params-table td:last-child { color: var(--text-primary); font-weight: 500; text-align: right; }
 
-        /* ── Modal ── */
         .modal-content {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -390,10 +380,9 @@
         .divider {
             height: 1px;
             background: var(--border);
-            margin: 16px 0;
+            margin: 16px 0 0 0;
         }
 
-        /* ── Loading spinner ── */
         .spinner-overlay {
             display: none;
             position: absolute;
@@ -405,12 +394,19 @@
             z-index: 10;
         }
 
-        /* ── Scrollbar ── */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-        /* ── Alert ── */
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px var(--bg-dark) inset !important;
+            -webkit-text-fill-color: var(--text-primary) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
         .alert-custom {
             background: rgba(47,128,237,0.1);
             border: 1px solid rgba(47,128,237,0.2);
@@ -429,9 +425,9 @@
 
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <div class="logo-icon">🚗</div>
+        <img class="logo-icon" src="../static/images/logo.png" alt="АвтоРазум">
         <div>
-            <div class="logo-text">CarSense</div>
+            <div class="logo-text">АвтоРазум</div>
             <div class="logo-sub">ML оценка авто</div>
         </div>
     </div>
@@ -591,7 +587,6 @@
                 </div>
             </div>
 
-            <!-- Как это работает -->
             <div class="col-lg-4">
                 <div class="how-it-works">
                     <h6><i class="bi bi-stars me-2"></i>Как это работает?</h6>
@@ -630,7 +625,7 @@
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="card">
-                    <div class="text-muted mb-2" style="font-size:13px;">Рыночная оценка автомобиля</div>
+                    <div class="text-secondary mb-2" style="font-size:13px;">Рыночная оценка автомобиля</div>
                     <div class="result-price" id="result-price">— ₽</div>
                     <div class="result-range" id="result-range"></div>
                     <div class="badge-accuracy">
@@ -664,14 +659,12 @@
 
 </main>
 
-<!-- ══════════════════════════════════════
-     AUTH MODAL
-════════════════════════════════════════ -->
+
 <div class="modal fade" id="authModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Добро пожаловать в CarSense</h5>
+                <h5 class="modal-title">Добро пожаловать в АвтоРазум</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -734,6 +727,20 @@ function switchTab(tab) {
     document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
 }
 
+function updateAuthUI() {
+    const token = localStorage.getItem('token');
+    const container = document.getElementById('auth-btn-container');
+    if (token) {
+        container.innerHTML = `<button class="nav-item" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i> Выйти
+        </button>`;
+    } else {
+        container.innerHTML = `<button class="nav-item" onclick="openAuthModal()">
+            <i class="bi bi-box-arrow-in-right"></i> Войти
+        </button>`;
+    }
+}
+
 
 async function login() {
     const email = document.getElementById('login-email').value;
@@ -746,8 +753,16 @@ async function login() {
         const data = await res.json();
         if (res.ok) {
             localStorage.setItem('token', data.access_token);
+            const userRes = await fetch(`${API}/auth/me`, {
+                headers: { 'Authorization': `Bearer ${data.access_token}` }
+            });
+            const user = await userRes.json();
             authModal.hide();
-            await renderNav('index');
+            if (user.role === 'admin') {
+                window.location.href = '/admin';
+            } else {
+                updateAuthUI();
+            }
         } else {
             document.getElementById('login-error').textContent = data.detail || 'Ошибка входа';
         }

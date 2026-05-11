@@ -20,16 +20,14 @@ async function renderNav(activePage) {
     let navItems = '';
 
     if (!user) {
-        // Анонимный пользователь
         navItems = `
-            <a href="/" class="nav-item ${activePage === 'index' ? 'active' : ''}">
+            <a href="/predict" class="nav-item ${activePage === 'index' ? 'active' : ''}">
                 <i class="bi bi-speedometer2"></i> Оценка авто
             </a>
             <a href="/about" class="nav-item ${activePage === 'about' ? 'active' : ''}">
                 <i class="bi bi-info-circle"></i> О проекте
             </a>`;
     } else if (user.role === 'admin') {
-        // Админ
         navItems = `
             <a href="/admin" class="nav-item ${activePage === 'admin' ? 'active' : ''}">
                 <i class="bi bi-people"></i> Пользователи
@@ -38,9 +36,8 @@ async function renderNav(activePage) {
                 <i class="bi bi-person"></i> Профиль
             </a>`;
     } else {
-        // Зарегистрированный пользователь
         navItems = `
-            <a href="/" class="nav-item ${activePage === 'index' ? 'active' : ''}">
+            <a href="/predict" class="nav-item ${activePage === 'index' ? 'active' : ''}">
                 <i class="bi bi-speedometer2"></i> Оценка авто
             </a>
             <a href="/history" class="nav-item ${activePage === 'history' ? 'active' : ''}">
@@ -73,14 +70,19 @@ async function renderNav(activePage) {
 function openAuthModal() {
     const modal = document.getElementById('authModal');
     if (modal) {
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-error').textContent = '';
+
+        document.getElementById('reg-email').value = '';
+        document.getElementById('reg-password').value = '';
+        document.getElementById('reg-password2').value = '';
+        document.getElementById('register-error').textContent = '';
+
         bootstrap.Modal.getOrCreateInstance(modal).show();
     }
 }
 
 async function logout() {
     localStorage.removeItem('token');
-    await renderNav(window._activePage || 'index');
-    if (window.location.pathname !== '/') {
-        window.location.href = '/';
-    }
+    window.location.href = '/';
 }
