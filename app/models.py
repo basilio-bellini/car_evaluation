@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -42,6 +42,8 @@ class Prediction(Base):
     gear_type = Column(String)
     displacement = Column(Float)
     power = Column(Integer)
+    description = Column(String, nullable=True)
+    region = Column(String)
 
     predicted_price = Column(Float)
     created_at = Column(DateTime, default=func.now())

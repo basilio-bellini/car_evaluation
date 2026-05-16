@@ -51,10 +51,13 @@ class PredictRequest(BaseModel):
     gear_type: str
     displacement: float
     power: int
+    description: str = ""
+    region: str
 
 
 class PredictResponse(BaseModel):
     predicted_price: float
+    text_keywords: list[str] = []
 
 
 class PredictionResponse(BaseModel):
@@ -75,6 +78,7 @@ class PredictionResponse(BaseModel):
     power: int
     predicted_price: float
     created_at: datetime
+    region: str
 
     model_config = ConfigDict(from_attributes=True)
 

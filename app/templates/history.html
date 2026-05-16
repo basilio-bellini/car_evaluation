@@ -177,15 +177,13 @@
 
         .history-table td.muted { color: var(--text-secondary); font-size: 13px; }
 
-        /* ── Price badge ── */
         .price-badge {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Manrope', sans-serif;
             font-weight: 700;
             font-size: 14px;
             color: var(--accent);
         }
 
-        /* ── Action btn ── */
         .action-btn {
             width: 30px; height: 30px;
             border-radius: 6px;
@@ -263,7 +261,7 @@
         .modal-header { border-bottom: 1px solid var(--border); padding: 20px 24px; }
 
         .modal-title {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Manrope', sans-serif;
             font-weight: 700;
             font-size: 18px;
         }
@@ -273,7 +271,7 @@
 
         /* ── Detail sections ── */
         .detail-price {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Manrope', sans-serif;
             font-weight: 800;
             font-size: 36px;
             color: var(--text-primary);
@@ -327,7 +325,7 @@
         .detail-date {
             font-size: 12px;
             color: var(--text-secondary);
-            margin-top: 4px;
+            margin-top: 16px;
         }
 
         .btn-new-estimate {
@@ -390,7 +388,7 @@
             <h1>История оценок</h1>
             <p>Ваши предыдущие запросы на оценку автомобилей</p>
         </div>
-        <a href="/" class="btn-new-estimate">
+        <a href="/predict" class="btn-new-estimate">
             <i class="bi bi-plus-lg"></i> Новая оценка
         </a>
     </div>
@@ -432,7 +430,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <!-- Цена -->
                 <div class=" mb-1" style="font-size:12px;">Рыночная оценка</div>
                 <div class="detail-price" id="modal-price">— <span>₽</span></div>
                 <div class="detail-range" id="modal-range"></div>
@@ -441,7 +438,6 @@
                 </div>
                 <div class="detail-date" id="modal-date"></div>
 
-                <!-- Основные параметры -->
                 <div class="detail-section-title">Параметры автомобиля</div>
                 <div class="detail-grid" id="modal-params"></div>
             </div>
@@ -550,7 +546,6 @@ function renderTable() {
         `).join('');
     }
 
-    // Пагинация
     document.getElementById('pagination-info').textContent =
         total > 0 ? `Показано ${start + 1}–${end} из ${total}` : 'Нет записей';
 
@@ -609,6 +604,7 @@ function openDetail(id) {
         ['Владельцев', item.owners_number],
         ['Состояние', item.accidents === 'OK' ? 'Не битый' : 'Есть ДТП'],
         ['Цвет', item.color],
+        ['Регион', item.region],
     ];
 
     document.getElementById('modal-params').innerHTML = params.map(([label, value]) => `

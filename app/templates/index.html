@@ -418,6 +418,25 @@
             align-items: center;
             gap: 8px;
         }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .keyword-tag {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: 1px solid rgba(47,128,237,0.2);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 2px;
+        }
+
     </style>
 </head>
 <body>
@@ -463,12 +482,16 @@
                                 <label class="form-label">Марка</label>
                                 <label for="brand"></label><select class="form-select" id="brand"  required>
                                     <option value="" hidden></option>
-                                    <option>Toyota</option><option>BMW</option>
-                                    <option>Mercedes-Benz</option><option>Audi</option>
-                                    <option>Volkswagen</option><option>Kia</option>
-                                    <option>Hyundai</option><option>Nissan</option>
-                                    <option>Mazda</option><option>Skoda</option>
-                                    <option>Lada (ВАЗ)</option><option>Renault</option>
+                                    <option>Lada (ВАЗ)</option><option>Audi</option>
+                                    <option>BMW</option><option>Chevrolet</option>
+                                    <option>Ford</option><option>Geely</option>
+                                    <option>Haval</option><option>Honda</option>
+                                    <option>Hyundai</option><option>Kia</option>
+                                    <option>Land Rover</option><option>Mazda</option>
+                                    <option>Mercedes-Benz</option><option>Mitsubishi</option>
+                                    <option>Nissan</option><option>Opel</option>
+                                    <option>Renault</option><option>Skoda</option>
+                                    <option>Toyota</option><option>Volkswagen</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -488,12 +511,18 @@
                                 <label for="body_type"></label><select class="form-select" id="body_type" required>
                                     <option value="" hidden></option>
                                     <option value="SEDAN">Седан</option>
-                                    <option value="ALLROAD_5_DOORS">Кроссовер</option>
-                                    <option value="HATCHBACK_5_DOORS">Хэтчбек</option>
+                                    <option value="ALLROAD_5_DOORS">Внедорожник 5-дверный</option>
+                                    <option value="HATCHBACK_5_DOORS">Хэтчбек 5-дверный</option>
                                     <option value="WAGON_5_DOORS">Универсал</option>
-                                    <option value="COUPE">Купе</option>
-                                    <option value="MINIVAN">Минивэн</option>
                                     <option value="LIFTBACK">Лифтбек</option>
+                                    <option value="ALLROAD_3_DOORS">Внедорожник 3-дверный</option>
+                                    <option value="HATCHBACK_3_DOORS">Хэтчбек 3-дверный</option>
+                                    <option value="MINIVAN">Минивэн</option>
+                                    <option value="COMPACTVAN">Компактвэн</option>
+                                    <option value="COUPE">Купе</option>
+                                    <option value="PICKUP">Пикап</option>
+                                    <option value="VAN">Фургон</option>
+                                    <option value="CABRIO">Кабриолет</option>
                                     <option value="OTHER">Другое</option>
                                 </select>
                             </div>
@@ -503,7 +532,7 @@
                                     <option value="" hidden></option>
                                     <option value="GASOLINE">Бензин</option>
                                     <option value="DIESEL">Дизель</option>
-                                    <option value="HYBRID">Гибрид</option>
+                                    <option value="OTHER">Другое</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -546,6 +575,7 @@
                                     <option value="коричневый">Коричневый</option>
                                     <option value="зелёный">Зелёный</option>
                                     <option value="бежевый">Бежевый</option>
+                                    <option value="бежевый">Голубой</option>
                                     <option value="другой">Другой</option>
                                 </select>
                             </div>
@@ -559,8 +589,9 @@
                                     <option value="D">D</option>
                                     <option value="E">E</option>
                                     <option value="F">F</option>
-                                    <option value="J">J (SUV)</option>
-                                    <option value="M">M (Минивэн)</option>
+                                    <option value="J">J</option>
+                                    <option value="M">M</option>
+                                    <option value="S">S</option>
                                     <option value="UNKNOWN">Не знаю</option>
                                 </select>
                             </div>
@@ -576,6 +607,38 @@
                                     <option value="ERROR">Есть ДТП</option>
                                 </select>
                             </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Регион</label>
+                                <label for="region"></label><select class="form-select" id="region">
+                                    <option value="" hidden></option>
+                                    <option value="Москва">Москва</option>
+                                    <option value="Санкт-Петербург">Санкт-Петербург</option>
+                                    <option value="Новосибирск">Новосибирск</option>
+                                    <option value="Екатеринбург">Екатеринбург</option>
+                                    <option value="Казань">Казань</option>
+                                    <option value="Нижний Новгород">Нижний Новгород</option>
+                                    <option value="Челябинск">Челябинск</option>
+                                    <option value="Самара">Самара</option>
+                                    <option value="Омск">Омск</option>
+                                    <option value="Ростов-на-Дону">Ростов-на-Дону</option>
+                                    <option value="Уфа">Уфа</option>
+                                    <option value="Красноярск">Красноярск</option>
+                                    <option value="Пермь">Пермь</option>
+                                    <option value="Воронеж">Воронеж</option>
+                                    <option value="Волгоград">Волгоград</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Описание автомобиля
+                                <span style="color: var(--text-secondary); font-weight:400;
+                                            text-transform: none; font-size: 11px;">
+                                    (необязательно, но повышает точность оценки)
+                                </span>
+                            </label>
+                            <label for="description"></label><textarea class="form-control" id="description" rows="3"
+                                                                       placeholder="Опишите состояние автомобиля, комплектацию, историю обслуживания..."></textarea>
                         </div>
 
                         <div class="mt-4">
@@ -630,6 +693,13 @@
                     <div class="result-range" id="result-range"></div>
                     <div class="badge-accuracy">
                         <i class="bi bi-patch-check-fill"></i> Высокая точность
+                    </div>
+
+                    <div id="keywords-block" style="display:none; margin-top: 16px;">
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                            Ключевые слова из описания:
+                        </div>
+                        <div id="keywords-tags"></div>
                     </div>
 
                     <div class="divider mt-4"></div>
@@ -816,6 +886,8 @@ document.getElementById('predict-form').addEventListener('submit', async (e) => 
         auto_class: document.getElementById('auto_class').value,
         owners_number: parseInt(document.getElementById('owners_number').value),
         accidents: document.getElementById('accidents').value,
+        region: document.getElementById('region').value,
+        description: document.getElementById('description').value,
     };
     const token = localStorage.getItem('token');
     const headers = { 'Content-Type': 'application/json' };
@@ -823,8 +895,9 @@ document.getElementById('predict-form').addEventListener('submit', async (e) => 
     try {
         const res = await fetch(`${API}/predict/`, { method: 'POST', headers, body: JSON.stringify(payload) });
         const data = await res.json();
+        console.log('Response:', data);
         if (res.ok) {
-            showResult(data.predicted_price, payload);
+            showResult(data.predicted_price, payload, data.text_keywords);
         } else {
             alert('Ошибка: ' + (data.detail || 'Не удалось получить оценку'));
         }
@@ -834,7 +907,7 @@ document.getElementById('predict-form').addEventListener('submit', async (e) => 
 });
 
 
-function showResult(price, params) {
+function showResult(price, params, keywords) {
     document.getElementById('form-section').style.display = 'none';
     document.getElementById('result-section').style.display = 'block';
     const formatted = new Intl.NumberFormat('ru-RU').format(Math.round(price));
@@ -855,11 +928,20 @@ function showResult(price, params) {
         ['Тип топлива', fuelLabels[params.engine_type] || params.engine_type],
         ['Состояние', params.accidents === 'OK' ? 'Не битый' : 'Есть ДТП'],
         ['Цвет', params.color],
+        ['Регион', params.region],
     ];
     document.getElementById('params-table').innerHTML = rows
         .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
     const token = localStorage.getItem('token');
     document.getElementById('not-saved-notice').style.display = token ? 'none' : 'flex';
+    setTimeout(() => {
+        if (keywords && keywords.length > 0) {
+            document.getElementById('keywords-block').style.display = 'block';
+            document.getElementById('keywords-tags').innerHTML = keywords
+                .map(w => `<span class="keyword-tag">${w}</span>`)
+                .join('');
+        }
+    }, 50);
 }
 
 
