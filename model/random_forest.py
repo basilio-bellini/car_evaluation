@@ -8,15 +8,14 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
 
 
-df = pd.read_csv("../data/processed/cars_v2.csv")
+df = pd.read_csv("../data/processed/cars_v3.csv")
 X = df.drop(columns=["price", "url", "description"])
 y = df["price"]
 
 
-numerical = ["year", "mileage", "displacement", "power"]
+numerical = ["year", "mileage", "displacement", "power", "owners_number"]
 categorical = ["brand", "model", "color", "body_type", "auto_class",
-               "owners_number", "accidents", "engine_type",
-               "transmission", "gear_type"]
+               "accidents", "engine_type", "transmission", "gear_type", "region"]
 
 
 preprocessor = ColumnTransformer(transformers=[
@@ -30,9 +29,17 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 pipeline_rf = Pipeline(steps=[
     ("preprocessor", preprocessor),
-    ("model", RandomForestRegressor(n_estimators=100, random_state=42))
+    ("model", RandomForestRegressor(
+        n_estimators=300,
+        max_depth=20,
+        min_samples_leaf=2,
+        max_features="sqrt",
+        n_jobs=-1,
+        random_state=42
+    )),
 ])
 
+print("Random Forest:")
 pipeline_rf.fit(X_train, y_train)
 y_pred_rf = pipeline_rf.predict(X_test)
 
@@ -44,3 +51,5 @@ print("Random Forest:")
 print(f"  MAE:  {mae:,.0f} руб.")
 print(f"  RMSE: {rmse:,.0f} руб.")
 print(f"  R²:   {r2:.4f}")
+
+print("Train R2")

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, KFold
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -9,17 +9,16 @@ from xgboost import XGBRegressor
 import optuna
 
 
-df = pd.read_csv("../data/processed/cars_v2.csv")
+df = pd.read_csv("../data/processed/cars_v3.csv")
 X = df.drop(columns=["price", "url", "description"])
 y = df["price"]
 
-numerical = ["year", "mileage", "displacement", "power"]
+numerical = ["year", "mileage", "displacement", "power", "owners_number"]
 categorical = ["brand", "model", "color", "body_type", "auto_class",
-               "owners_number", "accidents", "engine_type",
-               "transmission", "gear_type"]
+               "accidents", "engine_type", "transmission", "gear_type", "region"]
 
 preprocessor = ColumnTransformer(transformers=[
-    ("num", StandardScaler(), numerical),
+    ("num", "passthrough", numerical),
     ("cat", OneHotEncoder(handle_unknown="ignore"), categorical)
 ])
 
@@ -30,15 +29,19 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 def objective_xgb(trial):
     params = {
-        "n_estimators": trial.suggest_int("n_estimators", 100, 1000),
-        "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3),
-        "max_depth": trial.suggest_int("max_depth", 4, 10),
+        "n_estimators": trial.suggest_int("n_estimators", 300, 2000),
+        "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.1),
+        "max_depth": trial.suggest_int("max_depth", 4, 12),
+        "min_child_weight": trial.suggest_int("min_child_weight", 1, 15),
         "subsample": trial.suggest_float("subsample", 0.6, 1.0),
         "colsample_bytree": trial.suggest_float("colsample_bytree", 0.6, 1.0),
         "reg_alpha": trial.suggest_float("reg_alpha", 0, 10),
         "reg_lambda": trial.suggest_float("reg_lambda", 0, 10),
+        "gamma": trial.suggest_float("gamma", 0, 5),
+        "tree_method": "hist",
         "random_state": 42,
-        "verbosity": 0
+        "verbosity": 0,
+        "n_jobs": -1,
     }
 
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
