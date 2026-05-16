@@ -213,3 +213,5 @@ data/processed/*.json
 data/processed/*.csv
 
 catboost_info/
+model/*.cbm
+model/*.pkl
