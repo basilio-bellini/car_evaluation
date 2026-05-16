@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 
-df = pd.read_csv('../data/processed/cars_v2.csv')
+df = pd.read_csv('../data/processed/cars_v3.csv')
 
 def clean_description(text):
     if not isinstance(text, str):
@@ -14,5 +14,5 @@ def clean_description(text):
 
 df["description"] = df["description"].apply(clean_description)
 
-df.to_csv("../data/processed/cars_v2.csv", index=False, encoding="utf-8-sig")
-print("Сохранено в data/processed/cars_v2.csv")
+df.to_csv("../data/processed/cars_v3.csv", index=False, encoding="utf-8-sig")
+print("Сохранено в data/processed/cars_v3.csv")

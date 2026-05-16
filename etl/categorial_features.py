@@ -1,20 +1,39 @@
 import pandas as pd
 
-df = pd.read_csv('../data/processed/cars_v2.csv')
+df = pd.read_csv('../data/processed/cars_v3.csv')
 
-rare_colors = ['жёлтый', 'золотистый']
+rare_colors = ['пурпурный', 'оранжевый', 'фиолетовый', 'жёлтый', 'золотистый']
 df["color"] = df["color"].apply(lambda x: "другой" if x in rare_colors else x)
 
-rare_bodies = ['CABRIO', 'MICROVAN', 'HATCHBACK_4_DOORS', 'COUPE', 'PICKUP_ONE', 'PICKUP_TWO']
-df["body_type"] = df["body_type"].apply(lambda x: "OTHER" if x in rare_bodies else x)
+df["body_type"] = df["body_type"].replace({
+    'PICKUP_TWO': 'PICKUP',
+    'PICKUP_ONE_HALF': 'PICKUP',
+    'PICKUP_ONE': 'PICKUP',
 
-rare_classes = ['UNKNOWN', 'F', 'S']
-df["auto_class"] = df["auto_class"].apply(lambda x: "OTHER" if x in rare_bodies else x)
+    'ROADSTER': 'CABRIO',
+    'TARGA': 'CABRIO',
 
-rare_engines = ['LPG', 'HYBRID', 'ELECTRO']
-df["engine_type"] = df["engine_type"].apply(lambda x: "OTHER" if x in rare_bodies else x)
+    'MICROVAN': 'VAN',
+
+    'COUPE_HARDTOP': 'COUPE',
+
+    'HATCHBACK_4_DOORS': 'OTHER',
+    'LIMOUSINE': 'OTHER'
+})
+
+rare_engines = ['LPG', 'HYBRID']
+df["engine_type"] = df["engine_type"].apply(lambda x: "OTHER" if x in rare_engines else x)
+
+
+big_cities = ['Москва', 'Санкт-Петербург', 'Новосибирск',
+              'Екатеринбург', 'Казань', 'Красноярск',
+              'Нижний Новгород', 'Челябинск', 'Уфа',
+              'Краснодар', 'Самара', 'Ростов-на-дону',
+              'Омск', 'Воронеж', 'Пермь', 'Волгоград']
+df["region"] = df["region"].apply(lambda x: "Регион" if x not in big_cities else x)
+
 
 print('\n', f"Финальное количество: {len(df)}")
 
-df.to_csv("../data/processed/cars.csv", index=False, encoding="utf-8-sig")
-print("Сохранено в data/processed/cars_v2.csv")
+df.to_csv("../data/processed/cars_v3.csv", index=False, encoding="utf-8-sig")
+print("Сохранено в data/processed/cars_v3.csv")
