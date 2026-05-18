@@ -87,6 +87,15 @@ VALUABLE_KEYWORDS = {
     "аренда",
 }
 
+def clean_description(text):
+    if not isinstance(text, str):
+        return ""
+    text = text.replace("\n", " ").replace("\r", " ")
+    text = re.sub(r'[^\w\s]', '', text)
+    text = re.sub(r'\d+', '', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
 
 def extract_keywords(description: str, top_n: int = 5) -> list[str]:
     if not description:
@@ -111,28 +120,52 @@ def predict(
     db: Session = Depends(get_db),
     current_user: Optional[models.User] = Depends(get_optional_user)
 ):
-    input_data = pd.DataFrame([{
-        "year":          request.year,
-        "mileage":       request.mileage,
-        "displacement":  request.displacement,
-        "power":         request.power,
-        "brand":         request.brand,
-        "model":         request.model,
-        "color":         request.color,
-        "body_type":     request.body_type,
-        "auto_class":    request.auto_class,
-        "owners_number": request.owners_number,
-        "accidents":     request.accidents,
-        "engine_type":   request.engine_type,
-        "transmission":  request.transmission,
-        "gear_type":     request.gear_type,
-        "region":        request.region,
-        "description":   request.description,
-    }])
-
+    input_data = pd.DataFrame(
+        [
+            {
+                "brand": request.brand,
+                "model": request.model,
+                "year": request.year,
+                "mileage": request.mileage,
+                "color": request.color,
+                "body_type": request.body_type,
+                "auto_class": request.auto_class,
+                "owners_number": request.owners_number,
+                "accidents": request.accidents,
+                "engine_type": request.engine_type,
+                "transmission": request.transmission,
+                "gear_type": request.gear_type,
+                "displacement": request.displacement * 1000,
+                "power": request.power,
+                "description": request.description,
+                "region": request.region,
+            }
+        ]
+    )
+    input_data["description"] = input_data["description"].apply(clean_description)
     pool = Pool(input_data, cat_features=categorical, text_features=text)
     predicted_price = catboost_model.predict(pool)[0]
     keywords = extract_keywords(request.description)
+
+    shap_values = catboost_model.get_feature_importance(pool, type="ShapValues")
+    feature_shap = shap_values[0, :-1]
+    feature_names = list(input_data.columns)
+    shap_with_names = list(zip(feature_names, feature_shap))
+    top5 = sorted(
+        [(name, val) for name, val in shap_with_names if name != "description"],
+        key=lambda x: abs(x[1]),
+        reverse=True,
+    )[:5]
+    shap_factors = [
+        {
+            "feature": name,
+            "value": float(shap_val),
+            "display_value": (
+                f"+{int(shap_val):,} ₽" if shap_val > 0 else f"{int(shap_val):,} ₽"
+            ),
+        }
+        for name, shap_val in top5
+    ]
 
     if current_user:
         prediction = models.Prediction(
@@ -157,5 +190,6 @@ def predict(
         )
         db.add(prediction)
         db.commit()
-
-    return {"predicted_price": float(predicted_price), "text_keywords": keywords}
+    return {"predicted_price": float(predicted_price),
+            "text_keywords": keywords,
+            "shap_factors": shap_factors}

@@ -437,6 +437,64 @@
             margin: 2px;
         }
 
+        .shap-bar-container {
+            margin-top: 20px;
+        }
+
+        .shap-bar-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .shap-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .shap-label {
+            font-size: 13px;
+            color: var(--text-primary);
+            width: 180px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .shap-bar-wrap {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .shap-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .shap-bar-fill.positive { background: #3fb950; }
+        .shap-bar-fill.negative { background: #f85149; }
+
+        .shap-value {
+            font-size: 13px;
+            font-weight: 500;
+            width: 110px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .shap-value.positive { color: #3fb950; }
+        .shap-value.negative { color: #f85149; }
+
     </style>
 </head>
 <body>
@@ -626,6 +684,7 @@
                                     <option value="Пермь">Пермь</option>
                                     <option value="Воронеж">Воронеж</option>
                                     <option value="Волгоград">Волгоград</option>
+                                    <option value="Регион">Регион</option>
                                 </select>
                             </div>
                         </div>
@@ -693,6 +752,14 @@
                     <div class="result-range" id="result-range"></div>
                     <div class="badge-accuracy">
                         <i class="bi bi-patch-check-fill"></i> Высокая точность
+                    </div>
+
+                    <div id="shap-block" style="display:none;" class="shap-bar-container">
+                        <div class="shap-bar-title">
+                            <i class="bi bi-bar-chart-line me-1"></i>
+                            Ключевые факторы оценки
+                        </div>
+                        <div id="shap-items"></div>
                     </div>
 
                     <div id="keywords-block" style="display:none; margin-top: 16px;">
@@ -893,11 +960,11 @@ document.getElementById('predict-form').addEventListener('submit', async (e) => 
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
     try {
+        console.log('sending payload:', JSON.stringify(payload));
         const res = await fetch(`${API}/predict/`, { method: 'POST', headers, body: JSON.stringify(payload) });
         const data = await res.json();
-        console.log('Response:', data);
         if (res.ok) {
-            showResult(data.predicted_price, payload, data.text_keywords);
+            showResult(data.predicted_price, payload, data.text_keywords, data.shap_factors);
         } else {
             alert('Ошибка: ' + (data.detail || 'Не удалось получить оценку'));
         }
@@ -907,9 +974,20 @@ document.getElementById('predict-form').addEventListener('submit', async (e) => 
 });
 
 
-function showResult(price, params, keywords) {
+function showResult(price, params, keywords, shapFactors) {
+    if (window._keywordsTimer) clearTimeout(window._keywordsTimer);
+    if (window._shapTimer) clearTimeout(window._shapTimer);
+
     document.getElementById('form-section').style.display = 'none';
     document.getElementById('result-section').style.display = 'block';
+    document.getElementById('shap-block').style.display = 'none';
+    document.getElementById('shap-items').innerHTML = '';
+    console.log('reset done, shap-block display:', document.getElementById('shap-block').style.display);
+    document.getElementById('keywords-block').style.display = 'none';
+    document.getElementById('keywords-tags').innerHTML = '';
+    document.getElementById('result-price').innerHTML = '— ₽';
+    document.getElementById('result-range').textContent = '';
+
     const formatted = new Intl.NumberFormat('ru-RU').format(Math.round(price));
     document.getElementById('result-price').innerHTML = `${formatted} <span>₽</span>`;
     const low = new Intl.NumberFormat('ru-RU').format(Math.round(price * 0.92));
@@ -934,13 +1012,57 @@ function showResult(price, params, keywords) {
         .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
     const token = localStorage.getItem('token');
     document.getElementById('not-saved-notice').style.display = token ? 'none' : 'flex';
-    setTimeout(() => {
+
+    window._keywordsTimer = setTimeout(() => {
         if (keywords && keywords.length > 0) {
             document.getElementById('keywords-block').style.display = 'block';
             document.getElementById('keywords-tags').innerHTML = keywords
                 .map(w => `<span class="keyword-tag">${w}</span>`)
                 .join('');
         }
+    }, 50);
+
+    window._shapTimer = setTimeout(() => {
+        console.log('shap timeout fired, shapFactors:', shapFactors);
+        if (shapFactors && shapFactors.length > 0) {
+        const maxAbs = Math.max(...shapFactors.map(f => Math.abs(f.value)));
+        document.getElementById('shap-items').innerHTML = shapFactors.map(f => {
+            const pct = maxAbs > 0 ? (Math.abs(f.value) / maxAbs * 100).toFixed(1) : 0;
+            const cls = f.value >= 0 ? 'positive' : 'negative';
+            const sign = f.value >= 0 ? '+' : '';
+            const formatted = new Intl.NumberFormat('ru-RU').format(Math.round(f.value));
+            const featureLabels = {
+                year: 'Год выпуска',
+                mileage: 'Пробег',
+                power: 'Мощность',
+                brand: 'Марка',
+                displacement: 'Объём двигателя',
+                auto_class: 'Класс автомобиля',
+                engine_type: 'Тип топлива',
+                body_type: 'Тип кузова',
+                gear_type: 'Привод',
+                transmission: 'Коробка передач',
+                color: 'Цвет',
+                owners_number: 'Владельцы',
+                accidents: 'ДТП',
+                region: 'Регион',
+                description: 'Описание',
+                model: 'Модель',
+            };
+            const label = featureLabels[f.feature] || f.feature;
+            return `
+                <div class="shap-item">
+                    <div class="shap-label">${label}</div>
+                    <div class="shap-bar-wrap">
+                        <div class="shap-bar-fill ${cls}" style="width:${pct}%"></div>
+                    </div>
+                    <div class="shap-value ${cls}">${sign}${formatted} ₽</div>
+                </div>`;
+        }).join('');
+        document.getElementById('shap-block').style.display = 'block';
+    } else {
+        document.getElementById('shap-block').style.display = 'none';
+    }
     }, 50);
 }
 

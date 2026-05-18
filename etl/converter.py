@@ -28,7 +28,7 @@ total = 0
 skipped = 0
 
 with open("../data/raw/offers_with_descriptions.jsonl", "r", encoding="utf-8") as infile, \
-     open("../data/processed/cars_v3.csv", "w", encoding="utf-8-sig", newline="") as outfile:
+     open("../data/processed/cars_v4.csv", "w", encoding="utf-8-sig", newline="") as outfile:
 
     writer = csv.DictWriter(outfile, fieldnames=FIELDS, quoting=csv.QUOTE_ALL)
     writer.writeheader()

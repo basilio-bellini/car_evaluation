@@ -58,6 +58,7 @@ class PredictRequest(BaseModel):
 class PredictResponse(BaseModel):
     predicted_price: float
     text_keywords: list[str] = []
+    shap_factors: list[ShapFactor]
 
 
 class PredictionResponse(BaseModel):
@@ -90,3 +91,8 @@ class UserAdminResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class ShapFactor(BaseModel):
+    feature: str
+    value: float
+    display_value: str
