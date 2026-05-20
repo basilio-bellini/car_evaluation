@@ -15,8 +15,9 @@ COLOR_MAP = {
     '0000CC': 'синий',
     '4A2197': 'фиолетовый',
     '660099': 'пурпурный',
-    'DEA522': 'золотистый',
+    'DEA522': 'золотой',
     'C49648': 'бежевый',
+    'FFC0CB': 'розовый'
 }
 
 FIELDS = ["brand", "model", "year", "mileage", "price", "color",
@@ -28,7 +29,7 @@ total = 0
 skipped = 0
 
 with open("../data/raw/offers_with_descriptions.jsonl", "r", encoding="utf-8") as infile, \
-     open("../data/processed/cars_v4.csv", "w", encoding="utf-8-sig", newline="") as outfile:
+     open("../data/processed/cars_v8.csv", "w", encoding="utf-8-sig", newline="") as outfile:
 
     writer = csv.DictWriter(outfile, fieldnames=FIELDS, quoting=csv.QUOTE_ALL)
     writer.writeheader()
@@ -51,9 +52,9 @@ with open("../data/raw/offers_with_descriptions.jsonl", "r", encoding="utf-8") a
                 "year":          offer["documents"]["year"],
                 "mileage":       offer["state"]["mileage"],
                 "price":         offer["price_info"]["price"],
-                "color":         COLOR_MAP.get(offer.get("color_hex"), "другой"),
+                "color":         COLOR_MAP.get(offer["color_hex"], "другой"),
                 "body_type":     offer["vehicle_info"]["configuration"]["body_type"],
-                "auto_class":    offer["vehicle_info"]["configuration"].get("auto_class", "UNKNOWN"),
+                "auto_class":    offer["vehicle_info"]["configuration"]["auto_class"],
                 "owners_number": offer["documents"]["owners_number"],
                 "accidents":     offer["documents"]["accidents_resolution"],
                 "engine_type":   offer["vehicle_info"]["tech_param"]["engine_type"],
