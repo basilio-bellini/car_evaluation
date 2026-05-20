@@ -24,25 +24,22 @@ brands_by_year = [
     "opel"
 ]
 
-# brands_single = [
-#     "mazda",
-#     "geely",
-#     "land_rover",
-#     "haval",
-#     "honda",
-#     "citroen",
-#     "daewoo",
-#     "peugeot",
-#     "lexus",
-#     "porsche",
-#     "infiniti",
-#     "subaru",
-#     "suzuki",
-#     "volvo",
-#     "chery"
-# ]
-
 brands_single = [
+    "mazda",
+    "geely",
+    "land_rover",
+    "haval",
+    "honda",
+    "citroen",
+    "daewoo",
+    "peugeot",
+    "lexus",
+    "porsche",
+    "infiniti",
+    "subaru",
+    "suzuki",
+    "volvo",
+    "chery",
     "cadillac",
     "chrysler",
     "dodge",
@@ -64,7 +61,6 @@ brands_single = [
     "exeed",
     "mini",
 ]
-
 
 years = list(range(1990, 2027))
 
@@ -197,16 +193,16 @@ with sync_playwright() as p:
     except Exception as e:
         print(f"Ошибка установки региона: {e}")
 
-    # for brand in brands_by_year:
-    #     print(f"\nСобираем {brand}")
-    #     for year in years:
-    #         key = f"{brand}_{year}"
-    #         if key in collected_keys:
-    #             print(f"  Пропускаем {key} — уже собрано")
-    #             continue
-    #         print(f"  Год: {year}")
-    #         url = f"https://auto.ru/cars/{brand}/{year}-year/used/?resolution_filter=is_legal_ok&steering_wheel=LEFT&top_days=60"
-    #         browser, page = collect_brand(page, browser, p, url, key, collected_keys)
+    for brand in brands_by_year:
+        print(f"\nСобираем {brand}")
+        for year in years:
+            key = f"{brand}_{year}"
+            if key in collected_keys:
+                print(f"  Пропускаем {key} — уже собрано")
+                continue
+            print(f"  Год: {year}")
+            url = f"https://auto.ru/cars/{brand}/{year}-year/used/?resolution_filter=is_legal_ok&steering_wheel=LEFT&top_days=60"
+            browser, page = collect_brand(page, browser, p, url, key, collected_keys)
 
     for brand in brands_single:
         key = f"{brand}_all"
