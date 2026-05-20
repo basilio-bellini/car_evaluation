@@ -8,15 +8,13 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
 
 
-df = pd.read_csv("../data/processed/cars_v3.csv")
+df = pd.read_csv("../data/processed/cars_v7.csv")
 X = df.drop(columns=["price", "url", "description"])
 y = df["price"]
 
-
-numerical = ["year", "mileage", "displacement", "power", "owners_number"]
+numerical = ["year", "mileage", "displacement", "power", "owners_number", "power_per_liter", "is_premium"]
 categorical = ["brand", "model", "color", "body_type", "auto_class",
                "accidents", "engine_type", "transmission", "gear_type", "region"]
-
 
 preprocessor = ColumnTransformer(transformers=[
     ("num", StandardScaler(), numerical),
@@ -39,7 +37,6 @@ pipeline_rf = Pipeline(steps=[
     )),
 ])
 
-print("Random Forest:")
 pipeline_rf.fit(X_train, y_train)
 y_pred_rf = pipeline_rf.predict(X_test)
 
@@ -51,5 +48,3 @@ print("Random Forest:")
 print(f"  MAE:  {mae:,.0f} руб.")
 print(f"  RMSE: {rmse:,.0f} руб.")
 print(f"  R²:   {r2:.4f}")
-
-print("Train R2")

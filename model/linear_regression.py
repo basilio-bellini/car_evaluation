@@ -7,14 +7,15 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-df = pd.read_csv("../data/processed/cars_v3.csv")
+df = pd.read_csv("../data/processed/cars_v7.csv")
 
 X = df.drop(columns=["price", "url", "description"])
 y = df["price"]
 
-numerical = ["year", "mileage", "displacement", "power", "owners_number"]
-onehot_features = ["brand", "color", "body_type", "auto_class", "accidents",
-                   "engine_type", "transmission", "gear_type", "region", "model"]
+numerical = ["year", "mileage", "displacement", "power",
+             "owners_number", "power_per_liter", 'is_premium']
+onehot_features = ["brand", "model", "color", "body_type", "auto_class", "accidents",
+                   "engine_type", "transmission", "gear_type", "region"]
 
 preprocessor = ColumnTransformer(
     transformers=[
@@ -29,7 +30,7 @@ pipeline = Pipeline(steps=[
 ])
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=43
+    X, y, test_size=0.2, random_state=42
 )
 
 pipeline.fit(X_train, y_train)
@@ -44,6 +45,3 @@ print("Linear Regression:")
 print(f"  MAE:  {mae:,.0f} руб.")
 print(f"  RMSE: {rmse:,.0f} руб.")
 print(f"  R²:   {r2:.4f}")
-
-print(y_train.mean(), y_test.mean())
-print(y_train.std(), y_test.std())
