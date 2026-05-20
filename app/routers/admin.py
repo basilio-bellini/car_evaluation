@@ -56,3 +56,29 @@ def change_role(
     db.commit()
     db.refresh(user)
     return user
+
+
+@router.get("/stats")
+def get_stats(
+    db: Session = Depends(get_db), current_user: models.User = Depends(get_admin_user)
+):
+    from sqlalchemy import func
+
+    total_users = db.query(models.User).count()
+    total_predictions = db.query(models.Prediction).count()
+
+    avg_price = db.query(func.avg(models.Prediction.predicted_price)).scalar()
+
+    top_brand = (
+        db.query(models.Prediction.brand, func.count().label("cnt"))
+        .group_by(models.Prediction.brand)
+        .order_by(func.count().desc())
+        .first()
+    )
+
+    return {
+        "total_users": total_users,
+        "total_predictions": total_predictions,
+        "avg_price": round(avg_price) if avg_price else 0,
+        "top_brand": top_brand[0] if top_brand else "—",
+    }
