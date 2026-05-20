@@ -1,5 +1,4 @@
 import re
-from collections import Counter
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -14,9 +13,8 @@ from typing import Optional
 router = APIRouter(prefix="/predict", tags=["predict"])
 
 catboost_model = CatBoostRegressor()
-catboost_model.load_model("model/catboost_model_v3.cbm")
+catboost_model.load_model("model/catboost_model_v4.cbm")
 
-numerical = ["year", "mileage", "displacement", "power", "owners_number"]
 categorical = ["brand", "model", "color", "body_type", "auto_class",
                "accidents", "engine_type", "transmission", "gear_type", "region"]
 text = ["description"]
@@ -51,6 +49,7 @@ VALUABLE_KEYWORDS = {
     "jbl",
     "harman",
     "meridian",
+    "пневма",
     # Состояние
     "дилер",
     "официальный",
@@ -78,21 +77,37 @@ VALUABLE_KEYWORDS = {
     "премиум",
     "executive",
     # История
-    "один",
     "одна",
     "первый",
     "первая",
     "такси",
     "каршеринг",
     "аренда",
+    # Сделка
+    "обмен"
 }
+
+premium = [
+    'Porsche',
+    'Li Auto (Lixiang)'
+    'Lexus',
+    'Cadillac',
+    'Mercedes-Benz',
+    'Land Rover',
+    'BMW',
+    'Infiniti',
+    'Audi',
+    'Land Rover',
+    'Jaguar',
+    'Volvo',
+]
 
 def clean_description(text):
     if not isinstance(text, str):
         return ""
+    text = text.lower()
     text = text.replace("\n", " ").replace("\r", " ")
     text = re.sub(r'[^\w\s]', '', text)
-    text = re.sub(r'\d+', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
@@ -139,6 +154,8 @@ def predict(
                 "power": request.power,
                 "description": request.description,
                 "region": request.region,
+                "power_per_liter": request.power / request.displacement,
+                "is_premium": int(request.brand in premium),
             }
         ]
     )
@@ -152,7 +169,7 @@ def predict(
     feature_names = list(input_data.columns)
     shap_with_names = list(zip(feature_names, feature_shap))
     top5 = sorted(
-        [(name, val) for name, val in shap_with_names if name != "description"],
+        [(name, val) for name, val in shap_with_names if name not in ["power_per_liter", "is_premium"]],
         key=lambda x: abs(x[1]),
         reverse=True,
     )[:5]
